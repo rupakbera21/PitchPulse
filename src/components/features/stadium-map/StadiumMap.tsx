@@ -55,7 +55,15 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
   };
 
   return (
-    <section className={`w-full ${compact ? 'py-0 h-full flex flex-col items-center justify-center' : 'pt-4 pb-12 md:pt-8 md:pb-24 bg-transparent min-h-[600px] flex flex-col justify-center'} relative z-10`}>      <div className="absolute top-6 left-6 z-20 flex lg:hidden gap-4">
+    <section
+      className={`w-full ${compact ? 'py-0 h-full flex flex-col items-center justify-center' : 'pt-4 pb-12 md:pt-8 md:pb-24 bg-transparent min-h-[600px] flex flex-col justify-center'} relative z-10`}
+      aria-label="Interactive Stadium Map showing live crowd density by zone"
+    >
+      {/* Visually-hidden live region for screen readers */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {hoveredZone && `${hoveredZone.name}: ${hoveredZone.occupancy_pct}% occupancy, status ${hoveredZone.status}`}
+      </div>
+      <div className="absolute top-6 left-6 z-20 flex lg:hidden gap-4">
         <div className="bg-background/90 backdrop-blur-md p-5 rounded-xl border border-primary/20 shadow-xl">
           <h3 className="uppercase tracking-widest text-xs text-foreground/50 mb-2">Live Occupancy</h3>
           <p className="text-4xl font-mono font-black text-primary drop-shadow-[0_0_10px_rgba(0,210,106,0.3)]">{data.total_fans.toLocaleString()}</p>

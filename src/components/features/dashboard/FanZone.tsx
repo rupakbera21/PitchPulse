@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
+import NextImage from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, BarChart3, ScanLine, Activity, Zap } from 'lucide-react';
 import { useMatch } from '@/contexts/MatchContext';
@@ -99,9 +100,11 @@ export function FanZone() {
 
   const trophyImage = useMemo(() => (
     <div className="w-full h-full min-h-[400px] flex items-center justify-center relative">
-      <img 
+      <NextImage 
         src="/Trophy.png" 
-        alt="World Cup 2026" 
+        alt="FIFA World Cup 2026 Trophy" 
+        width={250}
+        height={350}
         className="w-[200px] md:w-[250px] object-contain" 
       />
     </div>
@@ -510,7 +513,7 @@ export function FanZone() {
                 <div key={idx} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-2xl p-6 shadow-xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
                   <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-3">
                     <div className="flex items-center gap-3">
-                      {getCountryCode(fixture.home) && <img src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width="28" alt={fixture.home} className="rounded-sm shadow-sm" />}
+                      {getCountryCode(fixture.home) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width={28} height={20} alt={`${fixture.home} flag`} className="rounded-sm shadow-sm" unoptimized />}
                       <span 
                         className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
                         style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(fixture.home)} 0%, ${getTeamColor(fixture.home)} 35%, #ffffff 50%, ${getTeamColor(fixture.home)} 65%, ${getTeamColor(fixture.home)} 100%)` }}
@@ -522,7 +525,7 @@ export function FanZone() {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      {getCountryCode(fixture.away) && <img src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width="28" alt={fixture.away} className="rounded-sm shadow-sm" />}
+                      {getCountryCode(fixture.away) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width={28} height={20} alt={`${fixture.away} flag`} className="rounded-sm shadow-sm" unoptimized />}
                       <span 
                         className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
                         style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(fixture.away)} 0%, ${getTeamColor(fixture.away)} 35%, #ffffff 50%, ${getTeamColor(fixture.away)} 65%, ${getTeamColor(fixture.away)} 100%)` }}
@@ -562,7 +565,7 @@ export function FanZone() {
                       >
                         {fixture.home}
                       </span>
-                      {getCountryCode(fixture.home) && <img src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width="28" alt={fixture.home} className="rounded-sm shadow-sm" />}
+                      {getCountryCode(fixture.home) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width={28} height={20} alt={`${fixture.home} flag`} className="rounded-sm shadow-sm" unoptimized />}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -574,7 +577,7 @@ export function FanZone() {
                       >
                         {fixture.away}
                       </span>
-                      {getCountryCode(fixture.away) && <img src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width="28" alt={fixture.away} className="rounded-sm shadow-sm" />}
+                      {getCountryCode(fixture.away) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width={28} height={20} alt={`${fixture.away} flag`} className="rounded-sm shadow-sm" unoptimized />}
                     </div>
                   </div>
                   <div className="mt-4 text-center">
