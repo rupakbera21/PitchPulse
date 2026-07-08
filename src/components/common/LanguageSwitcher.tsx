@@ -25,22 +25,24 @@ export function LanguageSwitcher() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          let detectedLoc = LOCATIONS[0];
           if (latitude > 8 && latitude < 37 && longitude > 68 && longitude < 97) {
-            setCurrentLoc(LOCATIONS[1]); // India
+            detectedLoc = LOCATIONS[1]; // India
           } else if (latitude < 0 && longitude < -50) {
-            setCurrentLoc(LOCATIONS[2]); // Argentina
+            detectedLoc = LOCATIONS[2]; // Argentina
           } else if (latitude > 22 && latitude < 31 && longitude > 24 && longitude < 36) {
-            setCurrentLoc(LOCATIONS[3]); // Egypt
+            detectedLoc = LOCATIONS[3]; // Egypt
           } else if (latitude > 24 && latitude < 49 && longitude < -66 && longitude > -125) {
-             setCurrentLoc(LOCATIONS[4]); // USA
-          } else {
-            setCurrentLoc(LOCATIONS[0]);
+             detectedLoc = LOCATIONS[4]; // USA
           }
+          setCurrentLoc(detectedLoc);
+          setLanguage(detectedLoc.lang as any);
           setLoading(false);
         },
         (error) => {
           console.error("Location access denied or failed", error);
           setCurrentLoc(LOCATIONS[0]);
+          setLanguage(LOCATIONS[0].lang as any);
           setLoading(false);
         }
       );

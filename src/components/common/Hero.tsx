@@ -94,7 +94,7 @@ export function Hero() {
             {match.home.name}
           </span>
           
-          <span className="text-foreground/40 text-4xl md:text-6xl tracking-widest mx-4 md:mx-0 -my-2 md:-my-6 z-0">
+          <span className="text-foreground/40 text-4xl md:text-6xl tracking-widest mx-4 md:mx-0 -my-6 md:-my-12 z-0 relative">
             VS
           </span>
           
