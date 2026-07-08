@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       const res = NextResponse.json({ success: true });
       res.cookies.set('control_room_session', 'authenticated', { 
         httpOnly: true, 
-        secure: process.env.NODE_ENV === 'production', 
+        secure: false, 
         path: '/' 
       });
       return res;
