@@ -88,16 +88,18 @@ export function Hero() {
           className="text-[12vw] md:text-[10rem] leading-[0.8] font-black uppercase tracking-tighter text-center flex flex-col items-center drop-shadow-2xl mb-4"
         >
           <span 
-            className="text-transparent bg-clip-text premium-text-gradient"
+            className="text-transparent bg-clip-text premium-text-gradient z-10"
             style={{ backgroundImage: `linear-gradient(to right, var(--team-home) 0%, var(--team-home) 35%, #ffffff 50%, var(--team-home) 65%, var(--team-home) 100%)` }}
           >
             {match.home.name}
           </span>
-          <br className="hidden md:block"/>
-          <span className="text-foreground/40 text-4xl md:text-6xl tracking-widest mx-4 md:mx-0">VS</span>
-          <br className="hidden md:block"/>
+          
+          <span className="text-foreground/40 text-4xl md:text-6xl tracking-widest mx-4 md:mx-0 -my-2 md:-my-6 z-0">
+            VS
+          </span>
+          
           <span 
-            className="text-transparent bg-clip-text premium-text-gradient"
+            className="text-transparent bg-clip-text premium-text-gradient z-10"
             style={{ backgroundImage: `linear-gradient(to right, var(--team-away) 0%, var(--team-away) 35%, #ffffff 50%, var(--team-away) 65%, var(--team-away) 100%)` }}
           >
             {match.away.name}
