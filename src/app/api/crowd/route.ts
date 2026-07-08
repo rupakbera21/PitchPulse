@@ -32,12 +32,12 @@ export async function POST(req: Request) {
         crowdState.zones[gateIndex].status = 'red';
         crowdState.zones[gateIndex].occupancy_pct = 100;
         crowdState.zones[gateIndex].wait_time_min = 45;
-        crowdState.zones[gateIndex].is_closed = true;
+        (crowdState.zones[gateIndex] as any).is_closed = true;
       } else if (action === 'open') {
         crowdState.zones[gateIndex].status = 'low';
         crowdState.zones[gateIndex].occupancy_pct = 10;
         crowdState.zones[gateIndex].wait_time_min = 2;
-        crowdState.zones[gateIndex].is_closed = false;
+        (crowdState.zones[gateIndex] as any).is_closed = false;
       }
       
       // Force an update to the busiest gate logic if needed
