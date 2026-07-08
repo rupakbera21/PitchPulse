@@ -6,8 +6,6 @@ import { ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMatch } from '@/contexts/MatchContext';
 import { MemphisElements } from './MemphisElements';
-import { Canvas } from '@react-three/fiber';
-import { TriondaBall3D } from '../features/concierge-chat/TriondaBall3D';
 
 export function Hero() {
   const { t } = useLanguage();
@@ -90,24 +88,16 @@ export function Hero() {
           className="text-[12vw] md:text-[10rem] leading-[0.8] font-black uppercase tracking-tighter text-center flex flex-col items-center drop-shadow-2xl mb-4"
         >
           <span 
-            className="text-transparent bg-clip-text premium-text-gradient relative z-20"
+            className="text-transparent bg-clip-text premium-text-gradient"
             style={{ backgroundImage: `linear-gradient(to right, var(--team-home) 0%, var(--team-home) 35%, #ffffff 50%, var(--team-home) 65%, var(--team-home) 100%)` }}
           >
             {match.home.name}
           </span>
-          
-          {/* Centered Huge 3D Ball */}
-          <div className="relative w-full flex justify-center items-center my-2 md:-my-12 h-32 md:h-24">
-            <div className="absolute inset-0 z-10 w-full h-[300px] md:h-[500px] -mt-[100px] md:-mt-[200px] pointer-events-none">
-              <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
-                <TriondaBall3D />
-              </Canvas>
-            </div>
-            <span className="text-foreground/40 text-4xl md:text-6xl tracking-widest mx-4 md:mx-0 relative z-20">VS</span>
-          </div>
-
+          <br className="hidden md:block"/>
+          <span className="text-foreground/40 text-4xl md:text-6xl tracking-widest mx-4 md:mx-0">VS</span>
+          <br className="hidden md:block"/>
           <span 
-            className="text-transparent bg-clip-text premium-text-gradient relative z-20"
+            className="text-transparent bg-clip-text premium-text-gradient"
             style={{ backgroundImage: `linear-gradient(to right, var(--team-away) 0%, var(--team-away) 35%, #ffffff 50%, var(--team-away) 65%, var(--team-away) 100%)` }}
           >
             {match.away.name}
