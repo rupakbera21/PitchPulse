@@ -3,7 +3,9 @@ import { cerebrasClient, geminiClient, groqApiKey } from '@/lib/llm-client';
 
 export async function POST(req: Request) {
   try {
-    let { message, context } = await req.json();
+    const json = await req.json();
+    let message = json.message;
+    const context = json.context;
 
     // Sanitize input
     if (typeof message !== 'string') {
@@ -57,10 +59,11 @@ CRITICAL RULES:
           ],
           model: 'llama3.1-8b',
         });
-        const reply = (chatCompletion as any).choices[0].message.content;
+        const reply = (chatCompletion as { choices: { message: { content: string } }[] }).choices[0].message.content;
         return NextResponse.json({ reply });
-      } catch (e: any) {
-        console.warn("Cerebras API Error, falling back to Gemini...", e.message);
+      } catch (e) {
+        const errMsg = e instanceof Error ? e.message : String(e);
+        console.warn("Cerebras API Error, falling back to Gemini...", errMsg);
       }
     }
 
@@ -76,8 +79,9 @@ CRITICAL RULES:
         });
         const reply = response.text;
         return NextResponse.json({ reply });
-      } catch (e: any) {
-        console.warn("Gemini API Error, falling back to Groq...", e.message);
+      } catch (e) {
+        const errMsg = e instanceof Error ? e.message : String(e);
+        console.warn("Gemini API Error, falling back to Groq...", errMsg);
       }
     }
 
@@ -99,25 +103,27 @@ CRITICAL RULES:
           })
         });
         if (groqRes.ok) {
-          const data = await groqRes.json();
+          const data = await groqRes.json() as { choices: { message: { content: string } }[] };
           const reply = data.choices[0].message.content;
           return NextResponse.json({ reply });
         } else {
           console.warn("Groq API Error, no fallbacks left.", await groqRes.text());
         }
-      } catch (e: any) {
-        console.warn("Groq fetch Error...", e.message);
+      } catch (e) {
+        const errMsg = e instanceof Error ? e.message : String(e);
+        console.warn("Groq fetch Error...", errMsg);
       }
     }
 
     // Final Fallback Mock
-    const busiest = context?.crowd?.busiest_gate || 'South Gate';
+    const busiest = (context as { crowd?: { busiest_gate?: string } })?.crowd?.busiest_gate || 'South Gate';
     return NextResponse.json({ 
       reply: `Welcome to the Smart Stadium! I see that the ${busiest} is currently heavily congested. To avoid wait times, I recommend using the East or West gates which are flowing smoothly. Enjoy the match!` 
     });
 
-  } catch (error: any) {
-    console.warn("Chat route overall error:", error.message);
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.warn("Chat route overall error:", errMsg);
     return NextResponse.json({ reply: "I'm having trouble connecting right now, but enjoy the match!" });
   }
 }

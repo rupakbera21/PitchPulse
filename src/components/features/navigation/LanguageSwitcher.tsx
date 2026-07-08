@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Globe, MapPin, ChevronDown } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
 
 const LOCATIONS = [
   { id: 'global', name: 'Global', lang: 'EN' },
@@ -36,7 +36,7 @@ export function LanguageSwitcher() {
             detectedLang = 'EN-US'; // USA
           }
 
-          setLanguage(detectedLang as any);
+          setLanguage(detectedLang as LanguageCode);
           setLoading(false);
           setShowSplash(false);
         },

@@ -2,7 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { simulateCrowdUpdate } from '../src/services/crowdSim.ts';
 
-test('Crowd Simulation Updates Correctly', (t) => {
+interface Zone {
+  id: string;
+  name: string;
+  type: string;
+  occupancy_pct: number;
+  status: string;
+  wait_time_min?: number;
+}
+
+test('Crowd Simulation Updates Correctly', () => {
   const initialState = {
     total_fans: 10000,
     busiest_gate: 'Gate 1',
@@ -18,12 +27,12 @@ test('Crowd Simulation Updates Correctly', (t) => {
   assert.notStrictEqual(newState.total_fans, 10000);
   
   // Occupancy should remain within 0-100 bounds
-  newState.zones.forEach((zone: any) => {
+  newState.zones.forEach((zone: Zone) => {
     assert.ok(zone.occupancy_pct >= 0 && zone.occupancy_pct <= 100);
   });
   
   // Wait times should be calculated for gates
-  newState.zones.forEach((zone: any) => {
+  newState.zones.forEach((zone: Zone) => {
     if (zone.type === 'gate') {
       assert.ok(zone.wait_time_min !== undefined);
       assert.strictEqual(zone.wait_time_min, Math.floor(zone.occupancy_pct / 4));

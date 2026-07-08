@@ -86,7 +86,9 @@ export function MatchProvider({ children }: { children: ReactNode }) {
   // Set active match on mount to avoid hydration mismatch
   useEffect(() => {
     const active = getActiveMatch();
-    setMatchState(active);
+    setTimeout(() => {
+      setMatchState(active);
+    }, 0);
   }, []);
 
   const setMatch = (id: string) => {

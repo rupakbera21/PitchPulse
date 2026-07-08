@@ -2,42 +2,37 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import NextImage from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, BarChart3, ScanLine, Activity, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Ticket, ScanLine, Zap } from 'lucide-react';
 import { useMatch } from '@/contexts/MatchContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useGLTF, Float, Environment } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useRef } from 'react';
-import * as THREE from 'three';
 import { PredictionCard } from './PredictionCard';
 import { TournamentBracket } from './TournamentBracket';
 import { HeadToHead } from './HeadToHead';
 
-function Trophy3D() {
-  const { scene } = useGLTF('/world_cup_trophy.glb');
-  const group = useRef<THREE.Group>(null);
-  useFrame((state, delta) => {
-    if (group.current) {
-      group.current.rotation.y += delta * 0.5;
-    }
-  });
-  return (
-    <Float speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
-      <group ref={group} scale={3.5} position={[0, -1, 0]}>
-        <primitive object={scene} />
-      </group>
-      <Environment preset="city" />
-    </Float>
-  );
+interface Fixture {
+  match_id?: string;
+  home: string;
+  away: string;
+  score?: string;
+  status: string;
+  type?: string;
+  isoDate?: string;
+  kickoff_local?: string;
+  time?: string;
+  date?: string;
 }
-useGLTF.preload('/world_cup_trophy.glb');
+
+interface NewsItem {
+  title: string;
+  [key: string]: unknown;
+}
 
 export function FanZone() {
   const { match } = useMatch();
   const { formatDate, formatTime } = useLanguage();
   const [feedMessages, setFeedMessages] = useState<{name: string, flag: string, text: string, isNews?: boolean}[]>([]);
-  const [fixtures, setFixtures] = useState<any[]>([]);
+  const [fixtures, setFixtures] = useState<Fixture[]>([]);
 
 
 
@@ -55,7 +50,9 @@ export function FanZone() {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => {
+      setMounted(true);
+    }, 0);
   }, []);
 
   useEffect(() => {
@@ -75,7 +72,7 @@ export function FanZone() {
         const res = await fetch('/api/news');
         const data = await res.json();
         if (data.news && data.news.length > 0) {
-          const newsMessages = data.news.map((item: any) => ({
+          const newsMessages = data.news.map((item: NewsItem) => ({
             name: 'Latest News',
             flag: 'un', // United Nations flag or similar generic flag icon
             text: `BREAKING: ${item.title}`,

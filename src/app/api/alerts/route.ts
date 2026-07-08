@@ -28,9 +28,9 @@ Format: Just the alert text, nothing else.`;
       ],
       model: 'gemma-4-31b',
     });
-    const alertText = (chatCompletion as any).choices[0].message.content;
+    const alertText = (chatCompletion as { choices: { message: { content: string } }[] }).choices[0].message.content;
     return NextResponse.json({ alerts: [alertText], timestamp: new Date().toISOString() });
-  } catch (error: any) {
+  } catch {
     // If we hit an AI API rate limit (429) or other failure, gracefully fallback to a smart mock response
     // rather than throwing a 500 error, which causes Next.js to show a dev-mode overlay.
     const crowdState = { busiest_gate: "Gate 4" }; // Safe default
@@ -39,7 +39,9 @@ Format: Just the alert text, nothing else.`;
       if (parsedBody && parsedBody.crowdState) {
         Object.assign(crowdState, parsedBody.crowdState);
       }
-    } catch (e) {}
+    } catch {
+      // Ignore body parse errors
+    }
 
     return NextResponse.json({ 
       alerts: [`CRITICAL: Overcrowding at ${crowdState.busiest_gate}. Diverting flow. (AI Rate Limited)`],

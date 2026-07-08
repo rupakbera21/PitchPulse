@@ -10,6 +10,21 @@ import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
 import { AlertFeed, Alert } from '@/components/features/control-room/AlertFeed';
 import { KPISummaryStrip } from '@/components/features/control-room/KPISummaryStrip';
 
+interface ControlRoomZone {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  occupancy_pct: number;
+  is_closed?: boolean;
+  wait_time_min?: number;
+  [key: string]: unknown;
+}
+
+const getRandomMockEta = (): string => {
+  return `${Math.floor(Math.random() * 3) + 1}m ${Math.floor(Math.random() * 60).toString().padStart(2, '0')}s`;
+};
+
 export default function ControlRoom() {
   const router = useRouter();
   const { data: crowdData, loading: crowdLoading } = useRealtimeCrowd();
@@ -45,7 +60,7 @@ export default function ControlRoom() {
 
   const confirmDeployment = (unitId: number, targetId: string) => {
     const sectorName = targetId.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const mockEta = `${Math.floor(Math.random() * 3) + 1}m ${Math.floor(Math.random() * 60).toString().padStart(2, '0')}s`;
+    const mockEta = getRandomMockEta();
     
     setStaffUnits(prev => prev.map(unit => {
       if (unit.id === unitId) {
@@ -202,7 +217,7 @@ export default function ControlRoom() {
           <h2 className="text-xl font-bold uppercase tracking-widest mb-6">Gate Overrides</h2>
           
           <div className="space-y-4">
-            {crowdData?.zones.filter((z:any) => z.type === 'gate').map((gate: any) => {
+            {crowdData?.zones.filter((z: ControlRoomZone) => z.type === 'gate').map((gate: ControlRoomZone) => {
               const isClosed = optimisticGates[gate.id] !== undefined ? optimisticGates[gate.id] : gate.is_closed;
               return (
                 <div key={gate.id} className="p-4 rounded border border-primary/20 bg-background/50 flex flex-col gap-4">
@@ -331,7 +346,7 @@ export default function ControlRoom() {
                     <div className="mt-4 pt-4 border-t border-primary/20">
                       <p className="text-[10px] uppercase text-foreground/50 tracking-widest mb-2">Select Target Sector</p>
                       <div className="flex flex-wrap gap-2">
-                        {crowdData?.zones.filter((z:any) => z.type === 'stand' || z.type === 'gate').map((zone: any) => (
+                        {crowdData?.zones.filter((z: ControlRoomZone) => z.type === 'stand' || z.type === 'gate').map((zone: ControlRoomZone) => (
                           <button
                             key={zone.id}
                             onMouseEnter={() => setHoveredZoneId(zone.id)}

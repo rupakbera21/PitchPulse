@@ -2,13 +2,42 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-let fallbackData: any = null;
+interface APIMatch {
+  id: string;
+  local_date?: string;
+  stadium_id?: string;
+  home_team_name_en?: string;
+  away_team_name_en?: string;
+  home_score?: string;
+  away_score?: string;
+  finished?: string;
+  time_elapsed?: string;
+  type?: string;
+}
 
-function loadFallbackData() {
+interface FallbackMatch {
+  match_id?: string;
+  date?: string;
+  time?: string;
+  score?: string;
+  status?: string;
+}
+
+interface FallbackData {
+  tournament: string;
+  sample_group_stage_results: Record<string, unknown>[];
+  round_of_32_results: Record<string, unknown>[];
+  round_of_16_schedule: FallbackMatch[];
+  quarterfinals_schedule?: FallbackMatch[];
+}
+
+let fallbackData: FallbackData | null = null;
+
+function loadFallbackData(): FallbackData {
   if (!fallbackData) {
     const dataPath = path.join(process.cwd(), 'src/data/worldcup2026_fallback_data.json');
     const fileContents = fs.readFileSync(dataPath, 'utf8');
-    fallbackData = JSON.parse(fileContents);
+    fallbackData = JSON.parse(fileContents) as FallbackData;
   }
   return fallbackData;
 }
@@ -22,7 +51,7 @@ export async function GET() {
     const data = await res.json();
     
     const live_schedule = data.games
-      .filter((m: any) => {
+      .filter((m: APIMatch) => {
         if (!m.local_date) return false;
         const [datePart] = m.local_date.split(' ');
         const [month, day, year] = datePart.split('/');
@@ -30,7 +59,7 @@ export async function GET() {
         const startDate = new Date('2026-06-25T00:00:00Z');
         return matchDate >= startDate;
       })
-      .map((m: any) => {
+      .map((m: APIMatch) => {
         let isoDate = '';
         if (m.local_date) {
           const [d, t] = m.local_date.split(' ');
