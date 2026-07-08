@@ -85,8 +85,11 @@ export function MatchProvider({ children }: { children: ReactNode }) {
 
   // Set active match on mount to avoid hydration mismatch
   useEffect(() => {
-    setMatchState(getActiveMatch());
-  }, []);
+    const active = getActiveMatch();
+    if (active.id !== match.id) {
+      setMatchState(active);
+    }
+  }, [match.id]);
 
   const setMatch = (id: string) => {
     const newMatch = MATCHES.find(m => m.id === id);

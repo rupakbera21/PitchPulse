@@ -73,7 +73,8 @@ export default function ControlRoom() {
   let optimisticCrowdData = crowdData;
   if (crowdData && Object.keys(optimisticGates).length > 0) {
     optimisticCrowdData = JSON.parse(JSON.stringify(crowdData));
-    optimisticCrowdData.zones.forEach((z: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (optimisticCrowdData as any)?.zones?.forEach((z: { type: string; id: string; is_closed: boolean; status: string }) => {
       if (z.type === 'gate' && optimisticGates[z.id] !== undefined) {
         z.is_closed = optimisticGates[z.id];
         z.status = optimisticGates[z.id] ? 'red' : 'low';
@@ -185,7 +186,7 @@ export default function ControlRoom() {
           <Users className="text-primary" size={32} />
           <div>
             <p className="text-foreground/50 uppercase tracking-widest text-xs mb-1">Total Attendance</p>
-            <p className="text-2xl font-bold">{crowdLoading ? '---' : crowdData?.total_fans.toLocaleString()}</p>
+            <p className="text-2xl font-bold">{crowdLoading ? '---' : crowdData?.total_fans?.toLocaleString()}</p>
           </div>
         </div>
         <div className="bg-secondary/40 border border-danger/40 p-6 rounded-xl flex items-center gap-4">

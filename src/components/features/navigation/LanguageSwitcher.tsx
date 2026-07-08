@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Globe, MapPin, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -78,10 +78,10 @@ export function LanguageSwitcher() {
         {/* The actual native select element, invisible but covering the whole area */}
         <select 
           value={language}
-          onChange={(e) => setLanguage(e.target.value as any)}
+          onChange={(e) => setLanguage(e.target.value as 'EN' | 'EN-IN' | 'ES-AR' | 'AR-EG' | 'EN-US')}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
         >
-          {LOCATIONS.map(loc => (
+          {LOCATIONS.map((loc) => (
             <option key={loc.id} value={loc.lang} className="bg-background text-foreground font-sans">
               {loc.name} ({loc.lang})
             </option>

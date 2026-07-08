@@ -5,6 +5,7 @@ import { REFRESH_INTERVALS } from '@/lib/constants';
  * Hook to fetch and poll live match schedule data.
  */
 export function useRealtimeMatches() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +39,7 @@ export function useRealtimeMatches() {
  * Hook to fetch and poll live crowd density simulation data.
  */
 export function useRealtimeCrowd() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

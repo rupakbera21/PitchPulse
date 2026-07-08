@@ -1,9 +1,8 @@
 "use client";
 
 import { useRealtimeCrowd } from '@/hooks/useRealtimeData';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize, ZoomIn, ZoomOut } from 'lucide-react';
 import { useMatch } from '@/contexts/MatchContext';
 import { isStandClosed, getZoneColor, getBorderColor, getBorderRadius } from '@/lib/stadium-routing';
 
@@ -11,7 +10,11 @@ import { isStandClosed, getZoneColor, getBorderColor, getBorderRadius } from '@/
  * Main 2.5D Stadium Map Component
  * Handles the display of the stadium, live occupancy, routing overlays, and Right Insights panel.
  */
-export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = null, crowdData = null }: { compact?: boolean, deployments?: any[], hoveredZoneId?: string | null, crowdData?: any }) {
+type ZoneData = { id: string; type: string; cx: number; cy: number; w: number; h: number; status: string; occupancy_pct: number; is_closed?: boolean; wait_time_min?: number; name: string; [key: string]: unknown };
+type DeploymentUnit = { id: number | string; hex?: string; color?: string; targetId?: string; [key: string]: unknown };
+type CrowdData = { total_fans: number; zones: ZoneData[]; [key: string]: unknown };
+
+export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = null, crowdData = null }: { compact?: boolean, deployments?: DeploymentUnit[], hoveredZoneId?: string | null, crowdData?: CrowdData | null }) {
   const { data: realtimeData, loading } = useRealtimeCrowd();
   const { match } = useMatch();
   
@@ -20,13 +23,11 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
   
   // Default zoom out once for public view (if not compact, scale = 0.8)
   const [scale, setScale] = useState(compact ? 1 : 0.8);
-  const [hoveredZone, setHoveredZone] = useState<any>(null);
+  const [hoveredZone, setHoveredZone] = useState<ZoneData | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
 
-  const resetView = () => {
-    setScale(1);
-  };  if (loading || !data) {
+  if (loading || !data) {
     return (
       <div className="h-[70vh] flex items-center justify-center bg-background border-y border-primary/20 text-primary">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -126,7 +127,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
           <div className="absolute inset-0 bg-primary/5 rounded-[40%] border border-primary/10 shadow-[0_0_100px_rgba(0,210,106,0.1)] pointer-events-none scale-110"></div>
 
           {/* Zones */}
-          {data.zones.map((zone: any) => {
+          {data.zones.map((zone: ZoneData) => {
             const isHovered = hoveredZone?.id === zone.id;
             
             if (zone.type === 'pitch') {
@@ -229,8 +230,8 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
               </g>
 
               {/* Deployments Animation */}
-              {deployments.map((deployment: any) => {
-                const target = data.zones.find((z:any) => z.id === deployment.targetId);
+              {deployments.map((deployment: DeploymentUnit) => {
+                const target = data.zones.find((z: ZoneData) => z.id === deployment.targetId);
                 if (!target) return null;
                 const color = deployment.hex || (deployment.color?.includes('accent') ? '#eab308' : '#00d26a');
                 return (

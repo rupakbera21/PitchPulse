@@ -63,7 +63,7 @@ export function MatchSchedule() {
             repeatType: "loop"
           }}
         >
-          {marqueeItems.map((match: any, i: number) => (
+          {marqueeItems.map((match: { home: string; away: string; date: string; status: string; kickoff_local?: string; home_score?: number; away_score?: number; score?: string; stage?: string; venue?: string; [key: string]: unknown }, i: number) => (
             <div 
               key={`${match.home}-${match.away}-${i}`}
               className={`flex-shrink-0 w-80 rounded-2xl bg-background/60 backdrop-blur-md border p-6 flex flex-col justify-between transition-all duration-500 hover:scale-[1.02] ${match.status === 'live' ? 'border-primary shadow-[0_0_20px_rgba(0,210,106,0.15)]' : 'border-primary/20'}`}

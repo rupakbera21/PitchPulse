@@ -30,7 +30,7 @@ export function useConciergeChat() {
       
       const data = await res.json();
       setMessages(prev => [...prev, { role: 'agent', content: data.reply || "Sorry, I couldn't process that." }]);
-    } catch (err) {
+    } catch (_err) {
       setMessages(prev => [...prev, { role: 'agent', content: "An error occurred connecting to the control room." }]);
     } finally {
       setIsLoading(false);

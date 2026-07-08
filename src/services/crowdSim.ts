@@ -34,10 +34,13 @@ export const initialCrowdState = {
   zones: STADIUM_ZONES_CONFIG
 };
 
-export function simulateCrowdUpdate(currentState: any) {
-  let busiestGate = currentState.zones.find((z:any) => z.id.startsWith('gate')) || currentState.zones[4];
+type CrowdZone = { id: string; type: string; occupancy_pct: number; status: string; is_closed?: boolean; wait_time_min?: number; name: string; [key: string]: unknown; };
+type CrowdState = { zones: CrowdZone[]; match_status: string; total_fans: number; busiest_gate: string; [key: string]: unknown; };
+
+export function simulateCrowdUpdate(currentState: CrowdState) {
+  let busiestGate = currentState.zones.find((z) => z.id.startsWith('gate')) || currentState.zones[4];
   
-  const newZones = currentState.zones.map((zone: any) => {
+  const newZones = currentState.zones.map((zone: CrowdZone) => {
     if (zone.type === 'pitch') return zone; // pitch doesn't change
 
     // Determine occupancy delta
@@ -49,7 +52,7 @@ export function simulateCrowdUpdate(currentState: any) {
       diff = 0; // Frozen if closed
     }
 
-    let newPct = Math.max(0, Math.min(100, zone.occupancy_pct + diff));
+    const newPct = Math.max(0, Math.min(100, zone.occupancy_pct + diff));
     
     const newZone = { ...zone, occupancy_pct: newPct, is_closed: zone.is_closed };
     

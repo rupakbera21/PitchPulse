@@ -129,7 +129,7 @@ export function Hero() {
                   <div className="text-5xl md:text-7xl font-black font-mono text-foreground tracking-tighter w-24 md:w-32 text-center drop-shadow-[0_0_15px_rgba(0,210,106,0.3)]">
                     {value.toString().padStart(2, '0')}
                   </div>
-                  <span className="text-xs md:text-sm uppercase tracking-[0.2em] mt-2 text-primary">{t(unit as any)}</span>
+                  <span className="text-xs md:text-sm uppercase tracking-[0.2em] mt-2 text-primary">{t(unit as "days" | "hours" | "minutes" | "seconds")}</span>
                 </div>
                 {index < array.length - 1 && (
                   <div className="text-5xl md:text-7xl font-black font-mono text-foreground/30 tracking-tighter self-start pt-1">:</div>
