@@ -1,15 +1,15 @@
 "use client";
 
-import { Hero } from '@/components/common/Hero';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { MatchSchedule } from '@/components/common/MatchSchedule';
 import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
-import { FanZone } from '@/components/common/FanZone';
 import { ChatWidget } from '@/components/features/concierge-chat/ChatWidget';
-import { StadiumServices } from '@/components/common/StadiumServices';
-import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
-import { MatchSwitcher } from '@/components/common/MatchSwitcher';
+import { Hero } from '@/components/features/dashboard/Hero';
+import { MatchSchedule } from '@/components/features/match-data/MatchSchedule';
+import { FanZone } from '@/components/features/dashboard/FanZone';
+import { StadiumServices } from '@/components/features/dashboard/StadiumServices';
+import { LanguageSwitcher } from '@/components/features/navigation/LanguageSwitcher';
+import { MatchSwitcher } from '@/components/features/navigation/MatchSwitcher';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMatch } from '@/contexts/MatchContext';

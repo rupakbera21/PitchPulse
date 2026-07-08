@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMatch } from '@/contexts/MatchContext';
-import { MemphisElements } from './MemphisElements';
+import { MemphisElements } from '@/components/common/MemphisElements';
 
 export function Hero() {
   const { t } = useLanguage();
