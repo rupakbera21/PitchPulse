@@ -45,7 +45,7 @@ export const MATCHES: Match[] = [
     gate: '7',
     block: '215',
     seat: 'C12',
-    stageKey: 'stage_semi_final'
+    stageKey: 'stage_quarter_final'
   },
   {
     id: 'm3',
