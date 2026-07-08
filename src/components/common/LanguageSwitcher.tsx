@@ -17,6 +17,7 @@ export function LanguageSwitcher() {
   const [currentLoc, setCurrentLoc] = useState(LOCATIONS[0]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const requestLocation = () => {
@@ -53,12 +54,8 @@ export function LanguageSwitcher() {
   };
 
   useEffect(() => {
-    const allow = window.confirm("Allow PitchPulse to auto-detect your location?");
-    if (allow) {
-      requestLocation();
-    } else {
-      setLoading(false);
-    }
+    // The overlay is shown by default on mount (showOverlay = true).
+    // The user action on the overlay will trigger requestLocation() or skip.
   }, []);
 
   useEffect(() => {
@@ -125,6 +122,37 @@ export function LanguageSwitcher() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Full-Screen Entry Overlay */}
+      {showOverlay && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/80 backdrop-blur-2xl">
+          <div className="bg-white/5 border border-white/10 p-10 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col items-center max-w-md text-center animate-in fade-in zoom-in-95 duration-500">
+            <h2 className="text-3xl font-black italic uppercase tracking-widest mb-2 text-white">PitchPulse.</h2>
+            <div className="w-12 h-1 bg-primary mb-6 rounded-full" />
+            
+            <p className="text-foreground/70 mb-10 text-sm leading-relaxed">
+              For the best live stadium experience, allow PitchPulse to auto-detect your location and set your language automatically.
+            </p>
+            
+            <div className="flex flex-col w-full gap-3">
+              <button 
+                type="button"
+                onClick={() => { requestLocation(); setShowOverlay(false); }}
+                className="w-full bg-primary text-background font-bold uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-primary/80 transition-colors shadow-[0_0_20px_rgba(0,210,106,0.3)] hover:shadow-[0_0_30px_rgba(0,210,106,0.5)]"
+              >
+                Allow Location
+              </button>
+              <button 
+                type="button"
+                onClick={() => { setLoading(false); setShowOverlay(false); }}
+                className="w-full bg-white/5 text-foreground/70 font-bold uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-white/10 hover:text-foreground transition-colors border border-white/10"
+              >
+                Skip
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
