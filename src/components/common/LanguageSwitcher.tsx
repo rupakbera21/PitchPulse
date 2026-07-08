@@ -19,7 +19,6 @@ export function LanguageSwitcher() {
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const requestLocation = () => {
     setLoading(true);
@@ -59,20 +58,6 @@ export function LanguageSwitcher() {
     // The user action on the overlay will trigger requestLocation() or skip.
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside, { passive: true });
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [dropdownRef]);
-
   const selectLocation = (loc: typeof LOCATIONS[0]) => {
     setCurrentLoc(loc);
     setLanguage(loc.lang as any);
@@ -80,12 +65,20 @@ export function LanguageSwitcher() {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative">
+      {/* Invisible overlay to catch clicks outside the dropdown */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setIsOpen(false)} 
+        />
+      )}
+
       {/* Premium Glass Button UI */}
       <button 
         type="button"
-        onPointerDown={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-3 bg-white/5 backdrop-blur-xl border ${isOpen ? 'border-primary/50 shadow-[0_0_20px_rgba(0,210,106,0.2)]' : 'border-white/10'} rounded-full px-4 py-2 hover:bg-white/10 hover:border-primary/30 transition-all duration-300 group`}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`relative z-50 flex items-center gap-3 bg-white/5 backdrop-blur-xl border ${isOpen ? 'border-primary/50 shadow-[0_0_20px_rgba(0,210,106,0.2)]' : 'border-white/10'} rounded-full px-4 py-2 hover:bg-white/10 hover:border-primary/30 transition-all duration-300 group`}
       >
         <MapPin size={16} className={loading ? "text-foreground/40 animate-pulse" : "text-primary group-hover:scale-110 transition-transform"} />
         <div className="flex flex-col text-left">
@@ -106,7 +99,7 @@ export function LanguageSwitcher() {
           <div className="p-2 border-b border-white/5 bg-white/5">
             <button 
               type="button"
-              onPointerDown={() => { requestLocation(); setIsOpen(false); }}
+              onClick={() => { requestLocation(); setIsOpen(false); }}
               className="text-[10px] text-primary uppercase tracking-widest font-bold w-full text-left px-3 py-2 hover:bg-primary/20 rounded-lg transition-colors flex items-center gap-2"
             >
               <MapPin size={12} />
@@ -118,7 +111,7 @@ export function LanguageSwitcher() {
               <li key={loc.id}>
                 <button 
                   type="button"
-                  onPointerDown={() => selectLocation(loc)}
+                  onClick={() => selectLocation(loc)}
                   className={`w-full text-left px-3 py-2.5 text-sm rounded-xl transition-all duration-200 flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(0,210,106,0.2)]' : 'hover:bg-white/10 text-foreground/80 hover:text-foreground'}`}
                 >
                   <span className="font-semibold">{loc.name}</span>
@@ -155,14 +148,14 @@ export function LanguageSwitcher() {
               <div className="flex flex-col w-full gap-3">
                 <button 
                   type="button"
-                  onPointerDown={() => { requestLocation(); setShowOverlay(false); }}
+                  onClick={() => { requestLocation(); setShowOverlay(false); }}
                   className="w-full bg-primary text-background font-bold uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-primary/80 transition-colors shadow-[0_0_20px_rgba(0,210,106,0.3)] hover:shadow-[0_0_30px_rgba(0,210,106,0.5)]"
                 >
                   Allow Location
                 </button>
                 <button 
                   type="button"
-                  onPointerDown={() => { setLoading(false); setShowOverlay(false); }}
+                  onClick={() => { setLoading(false); setShowOverlay(false); }}
                   className="w-full bg-white/5 text-foreground/70 font-bold uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-white/10 hover:text-foreground transition-colors border border-white/10"
                 >
                   Skip
