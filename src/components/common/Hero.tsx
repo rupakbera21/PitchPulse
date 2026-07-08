@@ -97,7 +97,7 @@ export function Hero() {
           </span>
           
           {/* Centered Huge 3D Ball */}
-          <div className="relative w-full flex justify-center items-center my-8 md:my-0 h-48 md:h-auto">
+          <div className="relative w-full flex justify-center items-center my-2 md:-my-12 h-32 md:h-24">
             <div className="absolute inset-0 z-10 w-full h-[300px] md:h-[500px] -mt-[100px] md:-mt-[200px] pointer-events-none">
               <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
                 <TriondaBall3D />

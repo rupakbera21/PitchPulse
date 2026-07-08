@@ -5,14 +5,25 @@ import { motion } from 'framer-motion';
 import 'flag-icons/css/flag-icons.min.css';
 
 const FLAG_MAP: Record<string, string> = {
-  "USA": "us", "United States": "us", "Mexico": "mx", "Canada": "ca",
+  "USA": "us", "United States": "us", "United States of America": "us", "Mexico": "mx", "Canada": "ca",
   "Argentina": "ar", "Brazil": "br", "England": "gb-eng", "France": "fr",
   "Germany": "de", "Spain": "es", "Portugal": "pt", "Netherlands": "nl",
   "Belgium": "be", "Croatia": "hr", "Morocco": "ma", "Switzerland": "ch",
   "Colombia": "co", "Egypt": "eg", "South Africa": "za", "Japan": "jp",
-  "Paraguay": "py", "Senegal": "sn", "DR Congo": "cd", "Sweden": "se",
-  "Norway": "no", "Ivory Coast": "ci", "Ecuador": "ec", "Bosnia and Herzegovina": "ba",
-  "Austria": "at", "Algeria": "dz", "Cape Verde": "cv", "Ghana": "gh", "Australia": "au"
+  "Paraguay": "py", "Senegal": "sn", "DR Congo": "cd", "Congo DR": "cd", "Sweden": "se",
+  "Norway": "no", "Ivory Coast": "ci", "Côte d'Ivoire": "ci", "Ecuador": "ec", "Bosnia and Herzegovina": "ba",
+  "Austria": "at", "Algeria": "dz", "Cape Verde": "cv", "Ghana": "gh", "Australia": "au",
+  "Italy": "it", "Uruguay": "uy", "Denmark": "dk", "Serbia": "rs", "Poland": "pl",
+  "South Korea": "kr", "Korea Republic": "kr", "Iran": "ir", "IR Iran": "ir",
+  "Saudi Arabia": "sa", "Qatar": "qa", "Nigeria": "ng", "Cameroon": "cm",
+  "Tunisia": "tn", "Mali": "ml", "New Zealand": "nz", "Costa Rica": "cr",
+  "Panama": "pa", "Jamaica": "jm", "Honduras": "hn", "El Salvador": "sv",
+  "Peru": "pe", "Chile": "cl", "Venezuela": "ve", "Bolivia": "bo", "Jordan": "jo",
+  "Wales": "gb-wls", "Scotland": "gb-sct", "Republic of Ireland": "ie",
+  "UAE": "ae", "United Arab Emirates": "ae", "Iraq": "iq", "Oman": "om",
+  "Uzbekistan": "uz", "China": "cn", "China PR": "cn", "Vietnam": "vn",
+  "Thailand": "th", "Indonesia": "id", "Guinea": "gn", "Burkina Faso": "bf",
+  "Gabon": "ga", "Zambia": "zm"
 };
 
 export function MatchSchedule() {
