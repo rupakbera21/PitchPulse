@@ -97,7 +97,7 @@ export function LanguageSwitcher() {
           <div className="p-2 border-b border-primary/10 bg-secondary/30">
             <button 
               type="button"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); requestLocation(); setIsOpen(false); }}
+              onClick={() => { requestLocation(); setIsOpen(false); }}
               className="text-[10px] text-primary uppercase tracking-widest font-bold w-full text-left px-2 py-1 hover:bg-primary/10 rounded"
             >
               Auto-Detect Location
@@ -108,7 +108,7 @@ export function LanguageSwitcher() {
               <li key={loc.id}>
                 <button 
                   type="button"
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
+                  onClick={() => selectLocation(loc)}
                   className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-foreground'}`}
                 >
                   <span className="font-semibold">{loc.name}</span>
