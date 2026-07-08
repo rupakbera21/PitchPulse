@@ -19,6 +19,7 @@ export type Match = {
   gate: string;
   block: string;
   seat: string;
+  stageKey: 'stage_group' | 'stage_round_of_16' | 'stage_quarter_final';
 };
 
 export const MATCHES: Match[] = [
@@ -31,7 +32,8 @@ export const MATCHES: Match[] = [
     city: 'Atlanta, GA',
     gate: '4',
     block: '112',
-    seat: 'A4'
+    seat: 'A4',
+    stageKey: 'stage_group'
   },
   {
     id: 'm2',
@@ -42,7 +44,8 @@ export const MATCHES: Match[] = [
     city: 'Boston, MA',
     gate: '7',
     block: '215',
-    seat: 'C12'
+    seat: 'C12',
+    stageKey: 'stage_round_of_16'
   },
   {
     id: 'm3',
@@ -53,7 +56,8 @@ export const MATCHES: Match[] = [
     city: 'Miami, FL',
     gate: '1',
     block: 'VIP',
-    seat: '1A'
+    seat: '1A',
+    stageKey: 'stage_quarter_final'
   }
 ];
 

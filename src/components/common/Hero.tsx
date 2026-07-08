@@ -67,7 +67,7 @@ export function Hero() {
           className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-primary text-background shadow-[0_0_20px_rgba(0,210,106,0.6)] mb-6"
         >
           <span className="w-2 h-2 rounded-full bg-background animate-pulse" />
-          <span className="text-background text-xs font-black uppercase tracking-[0.2em]">{t('round_of_16')}</span>
+          <span className="text-background text-xs font-black uppercase tracking-[0.2em]">{t(match.stageKey)}</span>
         </motion.div>
         
         <style dangerouslySetInnerHTML={{ __html: `

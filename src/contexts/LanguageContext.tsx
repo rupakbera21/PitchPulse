@@ -8,7 +8,9 @@ interface Translations {
   [key: string]: {
     smart_stadium: string;
     control_room: string;
-    round_of_16: string;
+    stage_group: string;
+    stage_round_of_16: string;
+    stage_quarter_final: string;
     kickoff_in: string;
     ask_ai: string;
     living_stadium: string;
@@ -24,7 +26,9 @@ const TRANSLATIONS: Translations = {
   'EN': {
     smart_stadium: 'Smart Stadium',
     control_room: 'Control Room',
-    round_of_16: 'Round of 16 Matchday',
+    stage_group: 'Group Stage Matchday',
+    stage_round_of_16: 'Round of 16 Matchday',
+    stage_quarter_final: 'Quarter-Final Matchday',
     kickoff_in: 'Kickoff In',
     ask_ai: 'Ask AI Concierge',
     living_stadium: 'Living Stadium',
@@ -37,7 +41,9 @@ const TRANSLATIONS: Translations = {
   'ES-AR': {
     smart_stadium: 'Estadio Inteligente',
     control_room: 'Sala de Control',
-    round_of_16: 'Octavos de Final',
+    stage_group: 'Fase de Grupos',
+    stage_round_of_16: 'Octavos de Final',
+    stage_quarter_final: 'Cuartos de Final',
     kickoff_in: 'Inicio En',
     ask_ai: 'Conserje de IA',
     living_stadium: 'Estadio Vivo',
@@ -50,7 +56,9 @@ const TRANSLATIONS: Translations = {
   'AR-EG': {
     smart_stadium: 'الملعب الذكي',
     control_room: 'غرفة التحكم',
-    round_of_16: 'دور الـ 16',
+    stage_group: 'دور المجموعات',
+    stage_round_of_16: 'دور الـ 16',
+    stage_quarter_final: 'ربع النهائي',
     kickoff_in: 'بداية المباراة في',
     ask_ai: 'المساعد الذكي',
     living_stadium: 'الملعب الحي',

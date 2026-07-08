@@ -74,9 +74,9 @@ export function LanguageSwitcher() {
         value={currentLoc.id}
         onChange={handleSelectChange}
       >
-        <option value="auto">Auto-Detect Location</option>
+        <option value="auto" className="bg-background text-foreground">Auto-Detect Location</option>
         {LOCATIONS.map(loc => (
-          <option key={loc.id} value={loc.id}>
+          <option key={loc.id} value={loc.id} className="bg-background text-foreground">
             {loc.name} ({loc.lang})
           </option>
         ))}
