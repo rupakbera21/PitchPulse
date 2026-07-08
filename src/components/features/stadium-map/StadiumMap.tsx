@@ -1,7 +1,7 @@
 "use client";
 
 import { useRealtimeCrowd } from '@/hooks/useRealtimeData';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMatch } from '@/contexts/MatchContext';
 import { isStandClosed, getZoneColor, getBorderColor, getBorderRadius } from '@/lib/stadium-routing';
@@ -26,6 +26,28 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
   const [hoveredZone, setHoveredZone] = useState<ZoneData | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
+
+  // Memoize closed zones map to avoid redundant calculations and scans on re-renders
+  const closedZones = useMemo(() => {
+    if (!data?.zones) return {};
+    const closedMap: Record<string, boolean> = {};
+    const gateNClosed = data.zones.find((z: ZoneData) => z.id === 'gate_n')?.is_closed;
+    const gateSClosed = data.zones.find((z: ZoneData) => z.id === 'gate_s')?.is_closed;
+    const gateEClosed = data.zones.find((z: ZoneData) => z.id === 'gate_e')?.is_closed;
+    const gateWClosed = data.zones.find((z: ZoneData) => z.id === 'gate_w')?.is_closed;
+
+    data.zones.forEach((zone: ZoneData) => {
+      if (zone.type === 'stand') {
+        let isClosed = !!zone.is_closed;
+        if (zone.id.includes('_n') && gateNClosed) isClosed = true;
+        if (zone.id.includes('_s') && gateSClosed) isClosed = true;
+        if (zone.id.includes('_e') && gateEClosed) isClosed = true;
+        if (zone.id.includes('_w') && gateWClosed) isClosed = true;
+        closedMap[zone.id] = isClosed;
+      }
+    });
+    return closedMap;
+  }, [data]);
 
   if (loading || !data) {
     return (
@@ -167,7 +189,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
             if (zone.type === 'stand') {
               // Create the bowl effect: Upper tiers are higher
               const baseZ = zone.id.startsWith('upper') ? 40 : 15;
-              const closed = isStandClosed(zone.id, data);
+              const closed = closedZones[zone.id];
               const isTargetHovered = hoveredZoneId === zone.id;
               
               return (

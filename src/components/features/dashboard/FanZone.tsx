@@ -8,8 +8,11 @@ import { useMatch } from '@/contexts/MatchContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGLTF, Float, Environment } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
 import { useRef } from 'react';
+import * as THREE from 'three';
+import { PredictionCard } from './PredictionCard';
+import { TournamentBracket } from './TournamentBracket';
+import { HeadToHead } from './HeadToHead';
 
 function Trophy3D() {
   const { scene } = useGLTF('/world_cup_trophy.glb');
@@ -33,68 +36,8 @@ useGLTF.preload('/world_cup_trophy.glb');
 export function FanZone() {
   const { match } = useMatch();
   const { formatDate, formatTime } = useLanguage();
-  const [mounted, setMounted] = useState(false);
-  const [voted, setVoted] = useState(false);
-  const [votes, setVotes] = useState({ home: 65, away: 35 });
   const [feedMessages, setFeedMessages] = useState<{name: string, flag: string, text: string, isNews?: boolean}[]>([]);
   const [fixtures, setFixtures] = useState<any[]>([]);
-
-  const knockoutMatches = useMemo(() => {
-    const qf = fixtures.filter((f) => f.type?.toLowerCase() === 'qf');
-    const matches = qf.length >= 4 ? qf.slice(0, 4) : (fixtures.length >= 4 ? fixtures.slice(-4) : fixtures);
-    
-    const unique = [];
-    const seen = new Set();
-    for (const m of matches) {
-      const key = m.match_id || `${m.home}-${m.away}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        unique.push(m);
-      }
-    }
-    while (unique.length < 4) {
-      unique.push({ home: 'TBD', away: 'TBD', score: '0-0', status: 'scheduled' });
-    }
-    return unique.slice(0, 4);
-  }, [fixtures]);
-
-  const getCountryCode = (name: string) => {
-    if (!name || name === 'TBD') return null;
-    const map: Record<string, string> = {
-      'Argentina': 'ar', 'Brazil': 'br', 'France': 'fr', 'Germany': 'de',
-      'Spain': 'es', 'Portugal': 'pt', 'England': 'gb-eng', 'Netherlands': 'nl',
-      'United States': 'us', 'Mexico': 'mx', 'Canada': 'ca', 'Uruguay': 'uy',
-      'Colombia': 'co', 'Morocco': 'ma', 'Senegal': 'sn', 'Japan': 'jp',
-      'South Korea': 'kr', 'Australia': 'au', 'Ecuador': 'ec', 'Switzerland': 'ch',
-      'Croatia': 'hr', 'Belgium': 'be', 'Sweden': 'se', 'Italy': 'it', 'Nigeria': 'ng',
-      'Norway': 'no', 'Denmark': 'dk', 'Poland': 'pl', 'Wales': 'gb-wls', 'Scotland': 'gb-sct',
-      'Serbia': 'rs', 'Chile': 'cl', 'Peru': 'pe', 'Iran': 'ir', 'Saudi Arabia': 'sa',
-      'Qatar': 'qa', 'Ghana': 'gh', 'Cameroon': 'cm', 'Tunisia': 'tn', 'Costa Rica': 'cr',
-      'Egypt': 'eg', 'Algeria': 'dz', 'Mali': 'ml', 'Ivory Coast': 'ci', 'Turkey': 'tr',
-      'Ukraine': 'ua', 'Austria': 'at', 'Hungary': 'hu', 'Czech Republic': 'cz'
-    };
-    return map[name] || null;
-  };
-
-  const getTeamColor = (name: string) => {
-    if (!name || name === 'TBD') return '#888888';
-    const colors: Record<string, string> = {
-      'France': '#0055A4', 'Morocco': '#c1272d', 'Spain': '#AA151B', 'Belgium': '#E30613',
-      'Norway': '#BA0C2F', 'England': '#cf081f', 'Argentina': '#75AADB', 'Switzerland': '#FF0000',
-      'Mexico': '#006847', 'United States': '#002868', 'Portugal': '#046A38', 'Brazil': '#FFDF00',
-      'Germany': '#FFCE00', 'Netherlands': '#F36C21', 'Uruguay': '#87CEEB', 'Colombia': '#FCD116',
-      'Senegal': '#00853F', 'Japan': '#000555', 'South Korea': '#C60C30', 'Australia': '#FFCD00',
-      'Croatia': '#FF0000', 'Italy': '#0064AA', 'Egypt': '#CE1126', 'Canada': '#FF0000'
-    };
-    return colors[name] || '#ffffff';
-  };
-
-  const formatLocalTime = (isoString?: string, fallbackTime?: string) => {
-    if (!isoString) return fallbackTime;
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return fallbackTime;
-    return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  };
 
 
 
@@ -110,6 +53,7 @@ export function FanZone() {
     </div>
   ), []);
 
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -169,27 +113,7 @@ export function FanZone() {
     return () => clearInterval(interval);
   }, [match]);
 
-  const powerStats = useMemo(() => {
-    // Generate deterministic stats based on team names
-    const getStat = (name: string, offset: number) => 65 + ((name.charCodeAt(0) + name.charCodeAt(name.length-1) + offset) % 30);
-    return [
-      { label: 'Attack', home: getStat(match.home.name, 1), away: getStat(match.away.name, 2) },
-      { label: 'Defense', home: getStat(match.home.name, 3), away: getStat(match.away.name, 4) },
-      { label: 'Midfield', home: getStat(match.home.name, 5), away: getStat(match.away.name, 6) },
-      { label: 'Stamina', home: getStat(match.home.name, 7), away: getStat(match.away.name, 8) },
-    ];
-  }, [match]);
 
-  const handleVote = (team: 'home' | 'away') => {
-    if (voted) return;
-    setVoted(true);
-    if (team === 'home') setVotes({ home: votes.home + 1, away: votes.away });
-    else setVotes({ home: votes.home, away: votes.away + 1 });
-  };
-
-  const total = votes.home + votes.away;
-  const homePct = Math.round((votes.home / total) * 100);
-  const awayPct = Math.round((votes.away / total) * 100);
 
   return (
     <>
@@ -206,136 +130,11 @@ export function FanZone() {
           <p className="text-foreground/50 uppercase tracking-[0.3em] font-bold">The Ultimate Matchday Experience</p>
         </div>
 
-        {/* Massive Prediction Card */}
-        <div className="mb-24">
-          <div className="bg-secondary/40 backdrop-blur-3xl border border-primary/20 p-12 md:p-16 rounded-[3rem] shadow-[0_20px_80px_rgba(0,0,0,0.6)] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-team-home/10 blur-[120px] rounded-full pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-team-away/10 blur-[120px] rounded-full pointer-events-none"></div>
-
-            <div className="flex items-center gap-4 mb-12 text-primary relative z-10 justify-center">
-              <BarChart3 size={32} />
-              <h3 className="text-3xl font-black uppercase tracking-widest text-white">Live Prediction</h3>
-            </div>
-            
-            <p className="text-4xl md:text-5xl font-black mb-16 relative z-10 text-center uppercase tracking-tight text-foreground/80">Who advances to the Quarter-Finals?</p>
-            
-            <div className="space-y-12 relative z-10 max-w-5xl mx-auto">
-              <div>
-                <div className="flex justify-between mb-4 font-black uppercase text-2xl md:text-4xl">
-                  <span 
-                    className="text-transparent bg-clip-text premium-text-gradient drop-shadow-lg"
-                    style={{ backgroundImage: `linear-gradient(to right, var(--team-home) 0%, var(--team-home) 35%, #ffffff 50%, var(--team-home) 65%, var(--team-home) 100%)` }}
-                  >
-                    {match.home.name}
-                  </span>
-                  {voted && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-team-home">{homePct}%</motion.span>}
-                </div>
-                <button 
-                  onClick={() => handleVote('home')}
-                  disabled={voted}
-                  className={`relative w-full h-24 md:h-32 rounded-2xl overflow-hidden bg-background border-2 transition-all duration-300 ${voted ? 'border-team-home/20 cursor-default' : 'border-team-home/50 hover:border-team-home hover:[box-shadow:0_0_40px_color-mix(in_srgb,var(--team-home)_40%,transparent)] hover:scale-[1.02]'}`}
-                >
-                  <motion.div 
-                    initial={{ width: '0%' }}
-                    animate={{ width: voted ? `${homePct}%` : '0%' }}
-                    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-team-home/60 to-team-home/20"
-                  />
-                  {!voted && <span className="absolute inset-0 flex items-center justify-center font-black text-2xl md:text-3xl tracking-[0.4em] text-team-home hover:scale-110 transition-transform">VOTE {match.home.code}</span>}
-                </button>
-              </div>
-
-              <div>
-                <div className="flex justify-between mb-4 font-black uppercase text-2xl md:text-4xl">
-                  <span 
-                    className="text-transparent bg-clip-text premium-text-gradient drop-shadow-lg"
-                    style={{ backgroundImage: `linear-gradient(to right, var(--team-away) 0%, var(--team-away) 35%, #ffffff 50%, var(--team-away) 65%, var(--team-away) 100%)` }}
-                  >
-                    {match.away.name}
-                  </span>
-                  {voted && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-team-away">{awayPct}%</motion.span>}
-                </div>
-                <button 
-                  onClick={() => handleVote('away')}
-                  disabled={voted}
-                  className={`relative w-full h-24 md:h-32 rounded-2xl overflow-hidden bg-background border-2 transition-all duration-300 ${voted ? 'border-team-away/20 cursor-default' : 'border-team-away/50 hover:border-team-away hover:[box-shadow:0_0_40px_color-mix(in_srgb,var(--team-away)_40%,transparent)] hover:scale-[1.02]'}`}
-                >
-                  <motion.div 
-                    initial={{ width: '0%' }}
-                    animate={{ width: voted ? `${awayPct}%` : '0%' }}
-                    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-team-away/60 to-team-away/20"
-                  />
-                  {!voted && <span className="absolute inset-0 flex items-center justify-center font-black text-2xl md:text-3xl tracking-[0.4em] text-team-away hover:scale-110 transition-transform">VOTE {match.away.code}</span>}
-                </button>
-              </div>
-            </div>
-            
-            {voted && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                className="mt-16 p-6 bg-background/80 backdrop-blur-md rounded-2xl border border-white/20 text-center relative z-10 max-w-lg mx-auto"
-              >
-                <p className="text-white font-black tracking-widest uppercase text-xl">Vote Registered!</p>
-                <p className="text-foreground/50 mt-2 text-sm uppercase tracking-widest">Global consensus is forming.</p>
-              </motion.div>
-            )}
-          </div>
-        </div>
+        <PredictionCard match={match} />
 
         <div className="grid lg:grid-cols-2 gap-16 items-stretch">
-          
           <div className="flex flex-col justify-between gap-16 h-full">
-            {/* Head-to-Head Power Index */}
-            <div className="bg-secondary/40 backdrop-blur-xl border border-primary/20 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col">
-              <div className="flex items-center gap-3 mb-10 text-primary relative z-20">
-                <Activity size={28} className="animate-pulse" />
-                <h3 className="text-2xl font-black uppercase tracking-widest">Head-to-Head Power</h3>
-              </div>
-              
-              <div className="flex justify-between items-center mb-8 px-2">
-                <div className="flex items-center gap-3">
-                  <span className={`fi fi-${match.home.flag} text-2xl rounded-sm overflow-hidden`}></span>
-                  <span className="font-black text-team-home uppercase tracking-wider">{match.home.name}</span>
-                </div>
-                <span className="text-foreground/40 font-black text-sm uppercase">VS</span>
-                <div className="flex items-center gap-3">
-                  <span className="font-black text-team-away uppercase tracking-wider">{match.away.name}</span>
-                  <span className={`fi fi-${match.away.flag} text-2xl rounded-sm overflow-hidden`}></span>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-6 relative z-20 flex-1 justify-center">
-                {powerStats.map((stat, i) => (
-                  <div key={i} className="flex flex-col gap-2">
-                    <div className="flex justify-between text-xs font-bold text-foreground/50 uppercase tracking-widest px-1">
-                      <span>{stat.home}</span>
-                      <span>{stat.label}</span>
-                      <span>{stat.away}</span>
-                    </div>
-                    <div className="flex h-3 w-full bg-background/50 rounded-full overflow-hidden">
-                      {/* Home Stat Bar */}
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(stat.home / (stat.home + stat.away)) * 100}%` }}
-                        transition={{ duration: 1, delay: 0.2 * i, type: "spring" }}
-                        className="h-full bg-team-home origin-left"
-                      />
-                      {/* Divider */}
-                      <div className="w-1 h-full bg-background z-10" />
-                      {/* Away Stat Bar */}
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(stat.away / (stat.home + stat.away)) * 100}%` }}
-                        transition={{ duration: 1, delay: 0.2 * i, type: "spring" }}
-                        className="h-full bg-team-away origin-right"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+            <HeadToHead match={match} />
             {/* Global Fan Feed */}
             <div className="w-full bg-secondary/40 backdrop-blur-xl rounded-[3rem] p-8 md:p-12 border border-primary/20 shadow-2xl overflow-hidden relative">
               <div className="flex items-center justify-between mb-8">
@@ -489,110 +288,7 @@ export function FanZone() {
         </div>
 
         {/* Tournament Bracket */}
-        <div className="mt-24 w-full bg-gradient-to-b from-secondary/60 to-background/80 backdrop-blur-xl border border-primary/20 p-8 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden">
-          <div className="flex items-center gap-3 mb-16 text-primary justify-center">
-            <BarChart3 size={32} />
-            <h3 className="text-3xl md:text-5xl font-black uppercase tracking-widest text-white">Quarter-Finals</h3>
-          </div>
-          
-          <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes gradientMove {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-          }
-          .premium-text-gradient {
-            background-size: 200% auto !important;
-            animation: gradientMove 4s linear infinite !important;
-          }
-        `}} />
-          
-          <div className="relative flex flex-col lg:flex-row justify-center items-center lg:items-stretch min-h-[500px] gap-8 lg:gap-0">
-            {/* Left Bracket */}
-            <div className="flex flex-col justify-around w-full lg:flex-1 relative z-10 gap-16 py-8">
-              {knockoutMatches.slice(0, 2).map((fixture, idx) => (
-                <div key={idx} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-2xl p-6 shadow-xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
-                  <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      {getCountryCode(fixture.home) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width={28} height={20} alt={`${fixture.home} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                      <span 
-                        className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                        style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(fixture.home)} 0%, ${getTeamColor(fixture.home)} 35%, #ffffff 50%, ${getTeamColor(fixture.home)} 65%, ${getTeamColor(fixture.home)} 100%)` }}
-                      >
-                        {fixture.home}
-                      </span>
-                    </div>
-                    <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[0] || 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      {getCountryCode(fixture.away) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width={28} height={20} alt={`${fixture.away} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                      <span 
-                        className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                        style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(fixture.away)} 0%, ${getTeamColor(fixture.away)} 35%, #ffffff 50%, ${getTeamColor(fixture.away)} 65%, ${getTeamColor(fixture.away)} 100%)` }}
-                      >
-                        {fixture.away}
-                      </span>
-                    </div>
-                    <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[1] || 0}</span>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <span className={`text-xs uppercase tracking-widest font-bold ${fixture.status === 'live' ? 'text-danger animate-pulse' : 'text-foreground/50'}`}>
-                      {fixture.status} • {formatLocalTime(fixture.isoDate, fixture.kickoff_local || fixture.time || fixture.date)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {/* Connecting Border for Left (Hidden on Mobile) */}
-              <div className="hidden lg:block absolute top-[20%] bottom-[20%] right-[-40px] w-10 border-r-[3px] border-y-[3px] border-white/20 rounded-r-2xl pointer-events-none" />
-              <div className="hidden lg:block absolute top-1/2 right-[-80px] w-10 h-0 border-t-[3px] border-white/20 pointer-events-none" />
-            </div>
-
-            {/* Center Trophy */}
-            <div className="w-full lg:w-[400px] shrink-0 h-[400px] lg:h-auto flex items-center justify-center relative z-20 order-first lg:order-none">
-              {trophyImage}
-            </div>
-
-            {/* Right Bracket */}
-            <div className="flex flex-col justify-around w-full lg:flex-1 relative z-10 gap-16 py-8">
-              {knockoutMatches.slice(2, 4).map((fixture, idx) => (
-                <div key={idx} className="bg-gradient-to-bl from-white/10 to-white/5 border border-white/20 rounded-2xl p-6 shadow-xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
-                  <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-3">
-                    <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[0] || 0}</span>
-                    <div className="flex items-center gap-3">
-                      <span 
-                        className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                        style={{ backgroundImage: `linear-gradient(to left, ${getTeamColor(fixture.home)} 0%, ${getTeamColor(fixture.home)} 35%, #ffffff 50%, ${getTeamColor(fixture.home)} 65%, ${getTeamColor(fixture.home)} 100%)` }}
-                      >
-                        {fixture.home}
-                      </span>
-                      {getCountryCode(fixture.home) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width={28} height={20} alt={`${fixture.home} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[1] || 0}</span>
-                    <div className="flex items-center gap-3">
-                      <span 
-                        className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                        style={{ backgroundImage: `linear-gradient(to left, ${getTeamColor(fixture.away)} 0%, ${getTeamColor(fixture.away)} 35%, #ffffff 50%, ${getTeamColor(fixture.away)} 65%, ${getTeamColor(fixture.away)} 100%)` }}
-                      >
-                        {fixture.away}
-                      </span>
-                      {getCountryCode(fixture.away) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width={28} height={20} alt={`${fixture.away} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                    </div>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <span className={`text-xs uppercase tracking-widest font-bold ${fixture.status === 'live' ? 'text-danger animate-pulse' : 'text-foreground/50'}`}>
-                      {fixture.status} • {formatLocalTime(fixture.isoDate, fixture.kickoff_local || fixture.time || fixture.date)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {/* Connecting Border for Right (Hidden on Mobile) */}
-              <div className="hidden lg:block absolute top-[20%] bottom-[20%] left-[-40px] w-10 border-l-[3px] border-y-[3px] border-white/20 rounded-l-2xl pointer-events-none" />
-              <div className="hidden lg:block absolute top-1/2 left-[-80px] w-10 h-0 border-t-[3px] border-white/20 pointer-events-none" />
-            </div>
-          </div>
-        </div>
+        <TournamentBracket fixtures={fixtures} trophyImage={trophyImage} />
       </div>
     </section>
     </>
