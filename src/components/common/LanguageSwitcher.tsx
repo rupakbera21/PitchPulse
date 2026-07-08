@@ -16,6 +16,9 @@ export function LanguageSwitcher() {
   const { setLanguage } = useLanguage();
   const [currentLoc, setCurrentLoc] = useState(LOCATIONS[0]);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const requestLocation = () => {
     setLoading(true);
     if ('geolocation' in navigator) {
@@ -58,39 +61,32 @@ export function LanguageSwitcher() {
     }
   }, []);
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    if (val === 'auto') {
-      requestLocation();
-    } else {
-      const loc = LOCATIONS.find(l => l.id === val);
-      if (loc) {
-        setCurrentLoc(loc);
-        setLanguage(loc.lang as any);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
       }
-    }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownRef]);
+
+  const selectLocation = (loc: typeof LOCATIONS[0]) => {
+    setCurrentLoc(loc);
+    setLanguage(loc.lang as any);
+    setIsOpen(false);
   };
 
   return (
-    <div className="relative inline-block">
-      {/* Invisible Native Select for 100% reliable mobile/desktop interaction */}
-      <select 
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-        value={currentLoc.id}
-        onChange={handleSelectChange}
+    <div className="relative" ref={dropdownRef}>
+      {/* Premium Glass Button UI */}
+      <button 
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-3 bg-white/5 backdrop-blur-xl border ${isOpen ? 'border-primary/50 shadow-[0_0_20px_rgba(0,210,106,0.2)]' : 'border-white/10'} rounded-full px-4 py-2 hover:bg-white/10 hover:border-primary/30 transition-all duration-300 group`}
       >
-        <option value="auto" className="bg-background text-foreground">Auto-Detect Location</option>
-        {LOCATIONS.map(loc => (
-          <option key={loc.id} value={loc.id} className="bg-background text-foreground">
-            {loc.name} ({loc.lang})
-          </option>
-        ))}
-      </select>
-      
-      {/* Visual Button UI (Pointer events pass through to select) */}
-      <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md border border-primary/30 rounded-full px-4 py-2 transition-colors">
-        <MapPin size={16} className={loading ? "text-foreground/40 animate-pulse" : "text-primary"} />
-        <div className="flex flex-col">
+        <MapPin size={16} className={loading ? "text-foreground/40 animate-pulse" : "text-primary group-hover:scale-110 transition-transform"} />
+        <div className="flex flex-col text-left">
           <span className="text-[9px] text-foreground/50 uppercase tracking-widest leading-none mb-1">
             {loading ? 'Requesting Location...' : currentLoc.name}
           </span>
@@ -99,8 +95,38 @@ export function LanguageSwitcher() {
             {currentLoc.lang}
           </span>
         </div>
-        <ChevronDown size={14} className="text-foreground/50" />
-      </div>
+        <ChevronDown size={14} className={`text-foreground/50 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`} />
+      </button>
+
+      {/* Premium Glass Dropdown */}
+      {isOpen && (
+        <div className="absolute top-full mt-3 right-0 w-56 bg-background/80 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] z-50 animate-in fade-in zoom-in-95 duration-200">
+          <div className="p-2 border-b border-white/5 bg-white/5">
+            <button 
+              type="button"
+              onClick={() => { requestLocation(); setIsOpen(false); }}
+              className="text-[10px] text-primary uppercase tracking-widest font-bold w-full text-left px-3 py-2 hover:bg-primary/20 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <MapPin size={12} />
+              Auto-Detect Location
+            </button>
+          </div>
+          <ul className="p-2 space-y-1">
+            {LOCATIONS.map(loc => (
+              <li key={loc.id}>
+                <button 
+                  type="button"
+                  onClick={() => selectLocation(loc)}
+                  className={`w-full text-left px-3 py-2.5 text-sm rounded-xl transition-all duration-200 flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(0,210,106,0.2)]' : 'hover:bg-white/10 text-foreground/80 hover:text-foreground'}`}
+                >
+                  <span className="font-semibold">{loc.name}</span>
+                  <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ${currentLoc.id === loc.id ? 'bg-primary/20' : 'bg-black/30'}`}>{loc.lang}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
