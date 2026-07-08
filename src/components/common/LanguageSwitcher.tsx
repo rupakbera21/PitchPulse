@@ -23,10 +23,21 @@ export function LanguageSwitcher() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          // For demo purposes, we will default to Global if we get coordinates
-          // unless they are explicitly in one of our regions. 
-          // To prevent forcing Argentina, we just stay on Global.
-          setLanguage('EN');
+          const { latitude, longitude } = position.coords;
+          let detectedLang = 'EN'; // Default to Global
+
+          // Approximate bounding boxes for our supported regions
+          if (latitude > 8 && latitude < 37 && longitude > 68 && longitude < 97) {
+            detectedLang = 'EN-IN'; // India
+          } else if (latitude > -55 && latitude < -21 && longitude > -73 && longitude < -53) {
+            detectedLang = 'ES-AR'; // Argentina
+          } else if (latitude > 22 && latitude < 32 && longitude > 24 && longitude < 36) {
+            detectedLang = 'AR-EG'; // Egypt
+          } else if (latitude > 24 && latitude < 49 && longitude > -125 && longitude < -66) {
+            detectedLang = 'EN-US'; // USA
+          }
+
+          setLanguage(detectedLang as any);
           setLoading(false);
           setShowOverlay(false);
         },
