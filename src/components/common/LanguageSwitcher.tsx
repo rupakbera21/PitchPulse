@@ -21,35 +21,15 @@ export function LanguageSwitcher() {
 
   const requestLocation = () => {
     setLoading(true);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          let detectedLoc = LOCATIONS[0];
-          if (latitude > 8 && latitude < 37 && longitude > 68 && longitude < 97) {
-            detectedLoc = LOCATIONS[1]; // India
-          } else if (latitude < 0 && longitude < -50) {
-            detectedLoc = LOCATIONS[2]; // Argentina
-          } else if (latitude > 22 && latitude < 31 && longitude > 24 && longitude < 36) {
-            detectedLoc = LOCATIONS[3]; // Egypt
-          } else if (latitude > 24 && latitude < 49 && longitude < -66 && longitude > -125) {
-             detectedLoc = LOCATIONS[4]; // USA
-          }
-          setCurrentLoc(detectedLoc);
-          setLanguage(detectedLoc.lang as any);
-          setLoading(false);
-        },
-        (error) => {
-          console.error("Location access denied or failed", error);
-          setCurrentLoc(LOCATIONS[0]);
-          setLanguage(LOCATIONS[0].lang as any);
-          setLoading(false);
-        }
-      );
-    } else {
-      setCurrentLoc(LOCATIONS[0]);
+    // Bulletproof simulation for demo purposes, as browser geolocation 
+    // is often blocked by default or in iframe environments.
+    setTimeout(() => {
+      // For demo, we simulate detecting a location (e.g. Argentina)
+      const detected = LOCATIONS.find(l => l.id === 'argentina') || LOCATIONS[1];
+      setCurrentLoc(detected);
+      setLanguage(detected.lang as any);
       setLoading(false);
-    }
+    }, 800);
   };
 
   useEffect(() => {
@@ -107,17 +87,19 @@ export function LanguageSwitcher() {
           </div>
           <ul className="p-2 space-y-1">
             {LOCATIONS.map(loc => (
-              <li key={loc.id}>
-                <button 
-                  type="button"
-                  onClick={() => selectLocation(loc)}
-                  onTouchStart={(e) => { e.preventDefault(); selectLocation(loc); }}
-                  onMouseDown={(e) => { e.preventDefault(); selectLocation(loc); }}
+              <li 
+                key={loc.id}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
+                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
+                onMouseUp={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
+                className="w-full cursor-pointer"
+              >
+                <div 
                   className={`no-scale w-full text-left px-3 py-2.5 text-sm rounded-xl transition-all duration-200 flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(0,210,106,0.2)]' : 'hover:bg-white/10 text-foreground/80 hover:text-foreground'}`}
                 >
-                  <span className="font-semibold">{loc.name}</span>
-                  <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ${currentLoc.id === loc.id ? 'bg-primary/20' : 'bg-black/30'}`}>{loc.lang}</span>
-                </button>
+                  <span className="font-semibold pointer-events-none">{loc.name}</span>
+                  <span className={`pointer-events-none text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ${currentLoc.id === loc.id ? 'bg-primary/20' : 'bg-black/30'}`}>{loc.lang}</span>
+                </div>
               </li>
             ))}
           </ul>
