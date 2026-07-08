@@ -1,16 +1,5 @@
 import { NextResponse } from 'next/server';
-import Cerebras from '@cerebras/cerebras_cloud_sdk';
-import { GoogleGenAI } from '@google/genai';
-
-// Initialize the Cerebras client conditionally
-const cerebrasClient = process.env.CEREBRAS_API_KEY ? new Cerebras({
-  apiKey: process.env.CEREBRAS_API_KEY,
-}) : null;
-
-// Initialize Google Gemini conditionally
-const geminiClient = process.env.GEMINI_API_KEY ? new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
-}) : null;
+import { cerebrasClient, geminiClient, groqApiKey } from '@/lib/llm-client';
 
 export async function POST(req: Request) {
   try {
@@ -93,12 +82,12 @@ CRITICAL RULES:
     }
 
     // Attempt 3: Groq (via fetch since sdk not installed)
-    if (process.env.GROQ_API_KEY) {
+    if (groqApiKey) {
       try {
         const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+            'Authorization': `Bearer ${groqApiKey}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({

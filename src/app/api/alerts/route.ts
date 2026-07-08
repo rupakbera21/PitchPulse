@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
-import Cerebras from '@cerebras/cerebras_cloud_sdk';
-
-const client = process.env.CEREBRAS_API_KEY ? new Cerebras({
-  apiKey: process.env.CEREBRAS_API_KEY,
-}) : null;
+import { cerebrasClient } from '@/lib/llm-client';
 
 export async function POST(req: Request) {
   try {
@@ -16,7 +12,7 @@ Focus ONLY on the most congested area (status 'red' or highest occupancy).
 Include a specific directive (e.g. "Redirect fans to Gate 6").
 Format: Just the alert text, nothing else.`;
 
-    if (!client || !process.env.CEREBRAS_API_KEY) {
+    if (!cerebrasClient || !process.env.CEREBRAS_API_KEY) {
       // Mock response for the demo if API key is not configured
       const busiestGate = crowdState.busiest_gate || "Gate 4";
       return NextResponse.json({ 
@@ -25,7 +21,7 @@ Format: Just the alert text, nothing else.`;
       });
     }
 
-    const chatCompletion = await client.chat.completions.create({
+    const chatCompletion = await cerebrasClient!.chat.completions.create({
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: JSON.stringify(crowdState) }
