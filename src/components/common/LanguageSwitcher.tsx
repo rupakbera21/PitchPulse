@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import { Globe, MapPin, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
