@@ -3,16 +3,18 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRealtimeCrowd } from '@/hooks/useRealtimeData';
-import { Activity, ShieldAlert, Users, Clock, AlertTriangle, XCircle, CheckCircle2 } from 'lucide-react';
+import { ShieldAlert, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MatchSwitcher } from '@/components/features/navigation/MatchSwitcher';
 import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
+import { AlertFeed, Alert } from '@/components/features/control-room/AlertFeed';
+import { KPISummaryStrip } from '@/components/features/control-room/KPISummaryStrip';
 
 export default function ControlRoom() {
   const router = useRouter();
   const { data: crowdData, loading: crowdLoading } = useRealtimeCrowd();
   
-  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [generatingAlerts, setGeneratingAlerts] = useState(false);
   const [aiLatency, setAiLatency] = useState<number | null>(null);
   const [resolvedAlerts, setResolvedAlerts] = useState<Set<number>>(new Set());
@@ -180,81 +182,20 @@ export default function ControlRoom() {
         </div>
       </header>
 
-      {/* KPI Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-secondary/40 border border-primary/20 p-6 rounded-xl flex items-center gap-4">
-          <Users className="text-primary" size={32} />
-          <div>
-            <p className="text-foreground/50 uppercase tracking-widest text-xs mb-1">Total Attendance</p>
-            <p className="text-2xl font-bold">{crowdLoading ? '---' : crowdData?.total_fans?.toLocaleString()}</p>
-          </div>
-        </div>
-        <div className="bg-secondary/40 border border-danger/40 p-6 rounded-xl flex items-center gap-4">
-          <AlertTriangle className="text-danger animate-pulse" size={32} />
-          <div>
-            <p className="text-foreground/50 uppercase tracking-widest text-xs mb-1">Critical Bottleneck</p>
-            <p className="text-2xl font-bold text-danger">{crowdLoading ? '---' : crowdData?.busiest_gate}</p>
-          </div>
-        </div>
-        <div className="bg-secondary/40 border border-primary/20 p-6 rounded-xl flex items-center gap-4">
-          <Clock className="text-primary" size={32} />
-          <div>
-            <p className="text-foreground/50 uppercase tracking-widest text-xs mb-1">System Uptime</p>
-            <p className="text-2xl font-bold">99.99%</p>
-          </div>
-        </div>
-        <div className="bg-secondary/40 border border-primary/20 p-6 rounded-xl flex items-center gap-4">
-          <Activity className="text-primary" size={32} />
-          <div>
-            <p className="text-foreground/50 uppercase tracking-widest text-xs mb-1">AI Latency</p>
-            <p className="text-2xl font-bold">{aiLatency ? `${aiLatency}ms` : '---'}</p>
-          </div>
-        </div>
-      </div>
+      <KPISummaryStrip
+        totalFans={crowdData?.total_fans ?? null}
+        busiestGate={crowdData?.busiest_gate ?? null}
+        aiLatency={aiLatency}
+        loading={crowdLoading}
+      />
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Incident Dispatch Panel */}
-        <div className="bg-secondary/20 border border-primary/20 rounded-xl p-6 flex flex-col h-[500px]">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold uppercase tracking-widest">Incident Dispatch</h2>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-foreground/50 uppercase">GenAI Cerebras</span>
-              {generatingAlerts && <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>}
-            </div>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto pr-2 space-y-4">
-            <AnimatePresence>
-              {alerts.map((alert) => {
-                const isResolved = resolvedAlerts.has(alert.id);
-                return (
-                  <motion.div 
-                    key={alert.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: isResolved ? 0.5 : 1, x: 0 }}
-                    className={`p-4 rounded border ${isResolved ? 'border-primary/20 bg-secondary/10' : 'border-danger/30 bg-danger/5 shadow-[0_0_15px_rgba(239,68,68,0.1)]'}`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <p className={`text-sm leading-relaxed ${isResolved ? 'line-through text-foreground/50' : 'text-foreground/90'}`}>{alert.text}</p>
-                      {!isResolved && (
-                        <button onClick={() => resolveAlert(alert.id)} className="shrink-0 p-1 hover:text-primary transition-colors text-foreground/50">
-                          <CheckCircle2 size={20} />
-                        </button>
-                      )}
-                    </div>
-                    <div className="mt-2 text-xs text-foreground/40 font-mono flex justify-between">
-                      <span>ID: {alert.id.toString().slice(-6)}</span>
-                      <span>{isResolved ? 'RESOLVED' : 'ACTIVE'}</span>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-            {alerts.length === 0 && !generatingAlerts && (
-              <div className="text-center text-foreground/40 mt-12 uppercase tracking-widest">Awaiting Intel...</div>
-            )}
-          </div>
-        </div>
+        <AlertFeed
+          alerts={alerts}
+          resolvedAlerts={resolvedAlerts}
+          generatingAlerts={generatingAlerts}
+          onResolve={resolveAlert}
+        />
 
         {/* Manual Gate Overrides */}
         <div className="bg-secondary/20 border border-primary/20 rounded-xl p-6 h-[500px] overflow-y-auto">
