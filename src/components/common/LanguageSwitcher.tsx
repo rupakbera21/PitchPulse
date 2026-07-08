@@ -96,7 +96,8 @@ export function LanguageSwitcher() {
         <div className="absolute top-full mt-2 right-0 w-48 bg-background/95 backdrop-blur-xl border border-primary/30 rounded-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-50">
           <div className="p-2 border-b border-primary/10 bg-secondary/30">
             <button 
-              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); requestLocation(); setIsOpen(false); }}
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); requestLocation(); setIsOpen(false); }}
               className="text-[10px] text-primary uppercase tracking-widest font-bold w-full text-left px-2 py-1 hover:bg-primary/10 rounded"
             >
               Auto-Detect Location
@@ -106,7 +107,8 @@ export function LanguageSwitcher() {
             {LOCATIONS.map(loc => (
               <li key={loc.id}>
                 <button 
-                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
                   className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-foreground'}`}
                 >
                   <span className="font-semibold">{loc.name}</span>
