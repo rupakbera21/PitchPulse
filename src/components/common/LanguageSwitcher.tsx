@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Globe, MapPin, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -13,11 +13,12 @@ const LOCATIONS = [
 ];
 
 export function LanguageSwitcher() {
-  const { setLanguage } = useLanguage();
-  const [currentLoc, setCurrentLoc] = useState(LOCATIONS[0]);
+  const { language, setLanguage } = useLanguage();
+  const currentLoc = LOCATIONS.find(loc => loc.lang === language) || LOCATIONS[0];
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const requestLocation = () => {
     setLoading(true);
@@ -26,33 +27,34 @@ export function LanguageSwitcher() {
     setTimeout(() => {
       // For demo, we simulate detecting a location (e.g. Argentina)
       const detected = LOCATIONS.find(l => l.id === 'argentina') || LOCATIONS[1];
-      setCurrentLoc(detected);
       setLanguage(detected.lang as any);
       setLoading(false);
     }, 800);
   };
 
   useEffect(() => {
-    // The overlay is shown by default on mount (showOverlay = true).
-    // The user action on the overlay will trigger requestLocation() or skip.
-  }, []);
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const selectLocation = (loc: typeof LOCATIONS[0]) => {
-    setCurrentLoc(loc);
     setLanguage(loc.lang as any);
     setIsOpen(false);
   };
 
   return (
-    <div className="relative">
-      {/* Invisible overlay to catch clicks outside the dropdown */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setIsOpen(false)} 
-        />
-      )}
-
+    <div className="relative" ref={wrapperRef}>
       {/* Premium Glass Button UI */}
       <button 
         type="button"
@@ -87,19 +89,15 @@ export function LanguageSwitcher() {
           </div>
           <ul className="p-2 space-y-1">
             {LOCATIONS.map(loc => (
-              <li 
-                key={loc.id}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
-                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
-                onMouseUp={(e) => { e.preventDefault(); e.stopPropagation(); selectLocation(loc); }}
-                className="w-full cursor-pointer"
-              >
-                <div 
-                  className={`no-scale w-full text-left px-3 py-2.5 text-sm rounded-xl transition-all duration-200 flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(0,210,106,0.2)]' : 'hover:bg-white/10 text-foreground/80 hover:text-foreground'}`}
+              <li key={loc.id}>
+                <button 
+                  type="button"
+                  onClick={() => selectLocation(loc)}
+                  className={`w-full text-left px-3 py-2.5 text-sm rounded-xl transition-all duration-200 flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(0,210,106,0.2)]' : 'hover:bg-white/10 text-foreground/80 hover:text-foreground'}`}
                 >
-                  <span className="font-semibold pointer-events-none">{loc.name}</span>
-                  <span className={`pointer-events-none text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ${currentLoc.id === loc.id ? 'bg-primary/20' : 'bg-black/30'}`}>{loc.lang}</span>
-                </div>
+                  <span className="font-semibold">{loc.name}</span>
+                  <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-md ${currentLoc.id === loc.id ? 'bg-primary/20' : 'bg-black/30'}`}>{loc.lang}</span>
+                </button>
               </li>
             ))}
           </ul>
