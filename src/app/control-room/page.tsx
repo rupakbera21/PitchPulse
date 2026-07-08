@@ -380,11 +380,11 @@ export default function ControlRoom() {
           </div>
           <div className="mt-6 p-4 rounded bg-background/50 border border-primary/20 flex flex-col gap-2">
             <div className="flex justify-between items-center">
-              <span className="text-[10px] text-primary uppercase font-bold tracking-widest">AI Threat Detection</span>
+              <span className="text-[10px] text-primary uppercase font-bold tracking-widest">Live Stadium Analytics</span>
               <span className="text-[10px] text-primary bg-primary/20 px-2 py-0.5 rounded uppercase font-bold tracking-widest animate-pulse">Active</span>
             </div>
             <p className="text-xs text-foreground/60 leading-relaxed font-mono">
-              Real-time computer vision algorithms are currently monitoring all sectors. Facial recognition matching against watchlists is active. Crowd density anomalies are within acceptable thresholds (Z-A: 64%, Z-B: 42%, Z-C: 81%, Z-VIP: 12%). No immediate security interventions recommended at this time.
+              Live metrics are currently tracking crowd density and general stadium flow across all sectors. Real-time data streams indicate normal movement patterns with anomalies within acceptable thresholds (Z-A: 64%, Z-B: 42%, Z-C: 81%, Z-VIP: 12%). All stadium operational systems are functioning optimally.
             </p>
           </div>
         </div>
