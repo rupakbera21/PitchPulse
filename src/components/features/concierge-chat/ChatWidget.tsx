@@ -56,11 +56,9 @@ export function ChatWidget() {
         >
           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity z-0"></div>
           
-          {/* 3D Ball Canvas - Always mounted */}
-          <div className="absolute inset-0 z-10 scale-[1.0] pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-              <TriondaBall3D />
-            </Canvas>
+          {/* Chat Icon */}
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+            <Bot size={28} className="text-white drop-shadow-lg" />
           </div>
         </button>
       </div>
@@ -82,10 +80,8 @@ export function ChatWidget() {
             <div className="p-5 bg-gradient-to-r from-background/80 to-secondary/80 border-b border-white/10 flex justify-between items-center backdrop-blur-md">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-team-home via-[color-mix(in_srgb,var(--team-home)_50%,var(--team-away)_50%)] to-team-away flex items-center justify-center shadow-lg border border-white/20 overflow-hidden relative">
-                  <div className="absolute inset-0 w-full h-full scale-[1.5] pointer-events-none">
-                    <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                      <TriondaBall3D cloneId="header" />
-                    </Canvas>
+                  <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none">
+                    <Bot size={24} className="text-white drop-shadow-md" />
                   </div>
                 </div>
                 <div>
