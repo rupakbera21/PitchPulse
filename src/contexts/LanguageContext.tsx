@@ -80,6 +80,8 @@ TRANSLATIONS['EN-US'] = TRANSLATIONS['EN'];
 interface LanguageContextProps {
   language: LanguageCode;
   setLanguage: (lang: LanguageCode) => void;
+  showSplash: boolean;
+  setShowSplash: (show: boolean) => void;
   t: (key: keyof Translations['EN']) => string;
   formatTime: (dateString: string) => string;
   formatDate: (dateString: string) => string;
@@ -99,6 +101,7 @@ const getTimeZoneForLanguage = (lang: LanguageCode) => {
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<LanguageCode>('EN');
+  const [showSplash, setShowSplash] = useState(true);
 
   const t = (key: keyof Translations['EN']) => {
     return TRANSLATIONS[language]?.[key] || TRANSLATIONS['EN'][key];
@@ -125,7 +128,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, formatTime, formatDate }}>
+    <LanguageContext.Provider value={{ language, setLanguage, showSplash, setShowSplash, t, formatTime, formatDate }}>
       {children}
     </LanguageContext.Provider>
   );
