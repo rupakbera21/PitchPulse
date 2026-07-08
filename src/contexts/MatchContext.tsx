@@ -19,7 +19,7 @@ export type Match = {
   gate: string;
   block: string;
   seat: string;
-  stageKey: 'stage_group' | 'stage_round_of_16' | 'stage_quarter_final';
+  stageKey: 'stage_group' | 'stage_round_of_16' | 'stage_quarter_final' | 'stage_semi_final';
 };
 
 export const MATCHES: Match[] = [
@@ -45,7 +45,7 @@ export const MATCHES: Match[] = [
     gate: '7',
     block: '215',
     seat: 'C12',
-    stageKey: 'stage_round_of_16'
+    stageKey: 'stage_semi_final'
   },
   {
     id: 'm3',
