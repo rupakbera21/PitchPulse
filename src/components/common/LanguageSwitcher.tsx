@@ -50,7 +50,12 @@ export function LanguageSwitcher() {
   };
 
   useEffect(() => {
-    requestLocation();
+    const allow = window.confirm("Allow PitchPulse to auto-detect your location?");
+    if (allow) {
+      requestLocation();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
