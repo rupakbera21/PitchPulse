@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useConciergeChat } from '@/hooks/useConciergeChat';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Canvas } from '@react-three/fiber';
 import { TriondaBall3D } from './TriondaBall3D';
 import { MessageSquare, X, Send, Loader2, Sparkles, Bot } from 'lucide-react';
@@ -16,6 +17,7 @@ export function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const { messages, input, setInput, isLoading, sendMessage } = useConciergeChat();
+  const { showSplash } = useLanguage();
 
   const scrollToBottom = () => {
     if (isOpen) {
@@ -41,6 +43,8 @@ export function ChatWidget() {
     setInput('');
     sendMessage(userMsg);
   };
+
+  if (showSplash) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
