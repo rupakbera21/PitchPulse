@@ -112,6 +112,7 @@ export function LanguageSwitcher() {
                 <button 
                   type="button"
                   onClick={() => selectLocation(loc)}
+                  onPointerDown={() => selectLocation(loc)}
                   className={`w-full text-left px-3 py-2.5 text-sm rounded-xl transition-all duration-200 flex justify-between items-center ${currentLoc.id === loc.id ? 'bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(0,210,106,0.2)]' : 'hover:bg-white/10 text-foreground/80 hover:text-foreground'}`}
                 >
                   <span className="font-semibold">{loc.name}</span>
@@ -127,10 +128,10 @@ export function LanguageSwitcher() {
       <AnimatePresence>
         {showOverlay && (
           <motion.div 
-            initial={{ opacity: 1, backdropFilter: 'blur(24px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)', pointerEvents: 'none' }}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, pointerEvents: 'none' }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/80"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background"
           >
             <motion.div 
               initial={{ scale: 1, opacity: 1 }}
