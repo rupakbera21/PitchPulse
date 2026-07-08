@@ -126,7 +126,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
           <div className="absolute inset-0 bg-primary/5 rounded-[40%] border border-primary/10 shadow-[0_0_100px_rgba(0,210,106,0.1)] pointer-events-none scale-110"></div>
 
           {/* Zones */}
-          {useMemo(() => data.zones.map((zone: any) => {
+          {data.zones.map((zone: any) => {
             const isHovered = hoveredZone?.id === zone.id;
             
             if (zone.type === 'pitch') {
@@ -216,7 +216,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
                 </div>
               );
             }
-          }), [data.zones, hoveredZone?.id, hoveredZoneId])}
+          })}
           {/* Smart Routing Lines and Tooltips */}
           <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full overflow-visible">

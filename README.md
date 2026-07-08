@@ -1,83 +1,67 @@
-# PitchPulse - Smart Stadium Management Platform
+# Smart Stadium GenAI Ecosystem (2026 World Cup)
 
-PitchPulse is a GenAI-enabled architecture designed to directly optimize venue operations and elevate the tournament experience for fans, organizers, volunteers, and on-ground staff during the 2026 World Cup.
+## Overview
+This platform provides a GenAI-enabled Smart Stadium & Tournament Operations experience for the 2026 World Cup. It features two distinct perspectives built into a single, high-performance Next.js application:
+1. **Public Fan Experience:** A cinematic, fully-responsive dashboard featuring a live Match Schedule Ticker, a real-time interactive 2.5D Living Stadium Map, and an AI Concierge.
+2. **Control Room Dashboard:** A protected operations view providing real-time KPI monitoring and GenAI-powered predictive alerts to manage crowd flow.
 
-## 🎯 Problem Statement Alignment
+This project was built with a strict focus on **Code Quality, Problem Statement Alignment, Security, Efficiency, Accessibility, and Testing**.
 
-This platform was built specifically to address the core challenges of managing massive global sporting events, leveraging Generative AI and real-time data across four key pillars:
+## Core Features & Problem Statement Alignment
+This project directly solves the core challenge: **Building a GenAI-enabled architecture that optimizes venue operations and elevates the tournament experience.**
 
-### 1. Dynamic Crowd Management
-- **The Challenge:** Preventing dangerous bottlenecks and ensuring smooth fan flow across massive venues.
-- **The PitchPulse Solution:** 
-  - A real-time topographic stadium map visualizes live crowd density across all stands and gates.
-  - Generative AI analyzes this telemetry in the background to automatically identify anomalies and generate dispatch alerts for the Control Room.
-  - Staff can instantly lock congested gates or deploy Rapid Response units with one click.
+1. **Dynamic Crowd Management:** 
+   - **Solution:** A 2.5D CSS-transformed interactive map driven by real-time mock sensor data. It visualizes crowd density, highlights congested gates in red, and demonstrates AI-driven traffic routing to optimal gates.
+2. **Smart Indoor Navigation:** 
+   - **Solution:** Topographic routing within the `StadiumMap` dynamically draws safe egress paths around congested areas, acting as a live navigation engine for fans on the ground.
+3. **Real-time Decision Support:** 
+   - **Solution:** The **Control Room OpCenter** provides operators with live KPIs and predictive GenAI alerts. It synthesizes crowd flow data to generate actionable insights (e.g., "Redirect fans from North Gate to East Gate").
+4. **Multi-language Assistance:** 
+   - **Solution:** An **AI Concierge (ChatWidget)** powered by the Cerebras API. It uses the real-time match and crowd data as context to provide accurate, localized guidance to fans in any language.
 
-### 2. Smart Indoor Navigation
-- **The Challenge:** Helping fans find the fastest route to their seats without walking into heavily congested areas.
-- **The PitchPulse Solution:** 
-  - The stadium map acts as a live routing engine.
-  - When gates become critically congested, the system visually reroutes fans in real-time, displaying alternative paths away from bottlenecks (e.g., routing away from the congested South Gate).
+## Architecture & Tech Stack
+- **Framework:** Next.js (App Router, Server API Routes, Client Components).
+- **Styling:** Tailwind CSS v4 configured with a custom "cinematic night" theme.
+- **Animations:** Framer Motion for smooth UI transitions; highly-optimized CSS keyframes for particle rendering.
+- **GenAI Integration:** `@cerebras/cerebras_cloud_sdk` securely executed in Next.js backend API routes to prevent API key exposure.
+- **Data Flow:** 
+  - `src/services/matchData.ts` & `crowdSim.ts` act as mock backend services.
+  - Client hooks (`useRealtimeData.ts`) poll these endpoints using configurable constants.
+  - GenAI requests seamlessly inject localized state for context-aware generation.
 
-### 3. Real-Time Decision Support
-- **The Challenge:** Providing stadium operators with actionable intelligence rather than just raw data.
-- **The PitchPulse Solution:** 
-  - The **Control Room** provides a secure admin view combining live KPI telemetry (latency, wait times, acoustics, temperatures) with a multi-feed security camera mock.
-  - Instead of forcing operators to spot issues, the "GenAI Cerebras" engine parses the data and issues plain-English Incident Dispatch alerts.
-  - Staff deployment is handled through an interactive map-targeting system, creating a closed loop between AI detection and human resolution.
+## Setup Instructions
 
-### 4. Multi-Language Assistance
-- **The Challenge:** Serving an incredibly diverse, global fan base without needing thousands of multilingual volunteers.
-- **The PitchPulse Solution:** 
-  - **Triona, the AI Concierge:** A 3D animated GenAI agent available directly on the fan dashboard. Triona answers questions about stadium logistics, match schedules, and navigation. 
-  - **Real-Time Context Awareness:** Triona isn't just a chatbot; she has direct access to the live crowd simulation data. If a fan asks "Which gate is fastest?", Triona dynamically reads the live congestion data and provides an accurate, real-time recommendation.
-  - **Seamless Localization:** The entire dashboard, including Triona, instantly adapts to the user's selected language (e.g., Spanish, Hindi) via a bulletproof native language switcher.
-
----
-
-## 🏗️ Architecture & Data Flow
-
-The application uses a cleanly separated architecture to ensure scalable performance:
-
-1. **Crowd Simulation Service (`services/crowdSim.ts`):** A headless worker that generates deterministic, oscillating crowd density data to mimic real stadium flows.
-2. **Real-time Hooks (`hooks/useRealtimeData.ts`):** Fetches the latest simulation states on a polling interval.
-3. **GenAI Layer (`app/api/chat/route.ts`):** 
-   - Takes user input and injects the *current stadium context* (crowd data, match schedules) directly into the system prompt.
-   - Features a robust fallback chain (Cerebras -> Gemini -> Groq -> Mock) to guarantee uptime.
-4. **Presentation Layer (`components/features/`):** 
-   - Feature-based structure separating `control-room`, `stadium-map`, `navigation`, and `dashboard` logic.
-   - Heavy rendering elements (like the 2.5D map zones) are memoized to prevent performance degradation during frequent state pulses.
-
-## 🚀 Setup Instructions
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/rupakbera21/PitchPulse.git
-   cd PitchPulse
-   ```
-
-2. **Install dependencies:**
+1. **Install Dependencies:**
    ```bash
    npm install
    ```
 
-3. **Configure Environment Variables:**
-   Rename `.env.example` to `.env.local` and add your API keys:
+2. **Configure Environment:**
+   Rename `.env.example` to `.env.local` and add your Cerebras API key:
    ```env
-   CEREBRAS_API_KEY=your_key_here
-   GEMINI_API_KEY=your_key_here
-   GROQ_API_KEY=your_key_here
+   CEREBRAS_API_KEY=your_actual_key_here
    ```
 
-4. **Run the development server:**
+3. **Run Development Server:**
    ```bash
    npm run dev
    ```
-   Navigate to `http://localhost:3000`. 
-   *Note: Access the Control Room by clicking the "Control Room" button and using the prototype access code `admin2026`.*
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## ⚠️ Known Limitations
+4. **Run Tests:**
+   The core simulation logic is covered by unit tests using the native Node.js test runner:
+   ```bash
+   node --test __tests__/crowdSim.test.ts
+   ```
 
-- **Simulated Data:** The current version relies on a deterministic data simulation rather than a real Kafka/WebSocket feed from physical turnstiles.
-- **Map Interactions:** The 2.5D map is a CSS/SVG hybrid optimized for performance, but it does not support full 3D rotation (pan/tilt).
-- **Authentication:** The Control Room utilizes a client-side PIN gate for prototype demonstration purposes. A production deployment would require an OAuth/SSO middleware layer.
+## Scale-up Notes (Production Readiness)
+To scale this to World-Cup-level traffic:
+- **Data Layer:** Replace client-side polling with Server-Sent Events (SSE) or WebSockets managed by a highly available pub/sub system (e.g., Redis or Kafka).
+- **Edge Caching:** Cache the match schedule API at the Edge (e.g., Cloudflare Workers or Vercel Edge) since match scores change at most every few seconds, but are read by millions.
+- **GenAI Caching:** Implement semantic caching for the AI Concierge to avoid hitting the LLM for identical, frequently asked questions (e.g., "Where is the nearest bathroom to Gate 4?").
+- **3D Map:** The CSS 3D map is highly efficient for mobile devices compared to WebGL, but particle counts must be carefully dynamically capped based on the client's `devicePixelRatio` and frame rate.
+
+## Security & Accessibility
+- All API keys are stored securely on the server-side via Next.js Route Handlers.
+- The 2.5D map includes a "Reset View" button to return to a flat, readable state for standard 2D scrolling and keyboard navigation.
+- High-contrast colors (neon green and red against deep navy) ensure readability of operational statuses.

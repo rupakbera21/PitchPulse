@@ -1,12 +1,12 @@
 "use client";
 
+import { Hero } from '@/components/features/dashboard/Hero';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
-import { ChatWidget } from '@/components/features/concierge-chat/ChatWidget';
-import { Hero } from '@/components/features/dashboard/Hero';
 import { MatchSchedule } from '@/components/features/match-data/MatchSchedule';
+import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
 import { FanZone } from '@/components/features/dashboard/FanZone';
+import { ChatWidget } from '@/components/features/concierge-chat/ChatWidget';
 import { StadiumServices } from '@/components/features/dashboard/StadiumServices';
 import { LanguageSwitcher } from '@/components/features/navigation/LanguageSwitcher';
 import { MatchSwitcher } from '@/components/features/navigation/MatchSwitcher';

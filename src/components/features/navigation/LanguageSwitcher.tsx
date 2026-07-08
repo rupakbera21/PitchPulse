@@ -23,16 +23,16 @@ export function LanguageSwitcher() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
           let detectedLang = 'EN'; // Default to Global
 
-          if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta' || (latitude > 8 && latitude < 37 && longitude > 68 && longitude < 97)) {
+          // Approximate bounding boxes for our supported regions
+          if (latitude > 8 && latitude < 37 && longitude > 68 && longitude < 97) {
             detectedLang = 'EN-IN'; // India
-          } else if (tz === 'America/Argentina/Buenos_Aires' || tz === 'America/Argentina/Cordoba' || (latitude > -55 && latitude < -21 && longitude > -73 && longitude < -53)) {
+          } else if (latitude > -55 && latitude < -21 && longitude > -73 && longitude < -53) {
             detectedLang = 'ES-AR'; // Argentina
-          } else if (tz === 'Africa/Cairo' || (latitude > 22 && latitude < 32 && longitude > 24 && longitude < 36)) {
+          } else if (latitude > 22 && latitude < 32 && longitude > 24 && longitude < 36) {
             detectedLang = 'AR-EG'; // Egypt
-          } else if (tz.startsWith('America/New_York') || tz.startsWith('America/Los_Angeles') || tz.startsWith('America/Chicago') || (latitude > 24 && latitude < 49 && longitude > -125 && longitude < -66)) {
+          } else if (latitude > 24 && latitude < 49 && longitude > -125 && longitude < -66) {
             detectedLang = 'EN-US'; // USA
           }
 

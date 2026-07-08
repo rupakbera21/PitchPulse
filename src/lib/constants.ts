@@ -27,8 +27,3 @@ export const ZONES = {
   STAND: 'stand',
   GATE: 'gate',
 };
-
-export const APP_CONFIG = {
-  ADMIN_ACCESS_CODE: 'admin2026',
-  ALERTS_POLL_INTERVAL_MS: 15000,
-};
