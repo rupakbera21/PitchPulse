@@ -1,0 +1,105 @@
+import { NextResponse } from 'next/server';
+import Cerebras from '@cerebras/cerebras_cloud_sdk';
+import { GoogleGenAI } from '@google/genai';
+
+// Initialize the Cerebras client conditionally
+const cerebrasClient = process.env.CEREBRAS_API_KEY ? new Cerebras({
+  apiKey: process.env.CEREBRAS_API_KEY,
+}) : null;
+
+// Initialize Google Gemini conditionally
+const geminiClient = process.env.GEMINI_API_KEY ? new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY
+}) : null;
+
+export async function POST(req: Request) {
+  try {
+    const { message, context } = await req.json();
+
+    const systemPrompt = `You are Triona, the AI Concierge for the 2026 World Cup Smart Stadium platform.
+You are energetic, helpful, and speak like a stadium announcer.
+You ONLY answer questions about FIFA football, the World Cup, matches, stadium navigation, and logistics. 
+If a user asks about anything completely unrelated to football or the stadium (like coding, generic history, science, etc.), you MUST politely decline and steer them back to football.
+
+Current Stadium Context:
+${JSON.stringify(context, null, 2)}
+
+CRITICAL RULES:
+- Answer EXACTLY and ONLY what the user asks. Do not provide unsolicited information or over-explain.
+- NEVER use markdown formatting (no **, no *, no #). Provide plain text ONLY.
+- Respond in the language the user is speaking.`;
+
+    // Attempt 1: Cerebras
+    if (cerebrasClient) {
+      try {
+        const chatCompletion = await cerebrasClient.chat.completions.create({
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: message }
+          ],
+          model: 'llama3.1-8b',
+        });
+        const reply = (chatCompletion as any).choices[0].message.content;
+        return NextResponse.json({ reply });
+      } catch (e: any) {
+        console.warn("Cerebras API Error, falling back to Gemini...", e.message);
+      }
+    }
+
+    // Attempt 2: Gemini
+    if (geminiClient) {
+      try {
+        const response = await geminiClient.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: message,
+          config: {
+            systemInstruction: systemPrompt
+          }
+        });
+        const reply = response.text;
+        return NextResponse.json({ reply });
+      } catch (e: any) {
+        console.warn("Gemini API Error, falling back to Groq...", e.message);
+      }
+    }
+
+    // Attempt 3: Groq (via fetch since sdk not installed)
+    if (process.env.GROQ_API_KEY) {
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: message }
+            ]
+          })
+        });
+        if (groqRes.ok) {
+          const data = await groqRes.json();
+          const reply = data.choices[0].message.content;
+          return NextResponse.json({ reply });
+        } else {
+          console.warn("Groq API Error, no fallbacks left.", await groqRes.text());
+        }
+      } catch (e: any) {
+        console.warn("Groq fetch Error...", e.message);
+      }
+    }
+
+    // Final Fallback Mock
+    const busiest = context?.crowd?.busiest_gate || 'South Gate';
+    return NextResponse.json({ 
+      reply: `Welcome to the Smart Stadium! I see that the ${busiest} is currently heavily congested. To avoid wait times, I recommend using the East or West gates which are flowing smoothly. Enjoy the match!` 
+    });
+
+  } catch (error: any) {
+    console.warn("Chat route overall error:", error.message);
+    return NextResponse.json({ reply: "I'm having trouble connecting right now, but enjoy the match!" });
+  }
+}

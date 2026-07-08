@@ -1,0 +1,96 @@
+{
+  "_readme": "Real, public 2026 World Cup fixture/schedule facts (not FIFA-branded assets) for use as a fallback dataset in the Match Data Service if a live sports-data API is unavailable during the hackathon. Facts as of July 6, 2026. Update scores/status as the tournament progresses. Do not use official FIFA logos, emblem, or the '™' branded wordmark in the UI alongside this data.",
+
+  "tournament": {
+    "name": "2026 World Cup",
+    "edition": "23rd",
+    "start_date": "2026-06-11",
+    "end_date": "2026-07-19",
+    "host_countries": ["United States", "Canada", "Mexico"],
+    "host_cities_count": 16,
+    "teams": 48,
+    "total_matches": 104,
+    "group_stage_matches": 72,
+    "knockout_stage_matches": 32,
+    "current_stage_as_of_2026_07_06": "Round of 16",
+    "final_venue": "New York New Jersey Stadium (MetLife Stadium), East Rutherford, New Jersey",
+    "final_date": "2026-07-19"
+  },
+
+  "host_cities_stadiums": [
+    { "city": "New York/New Jersey", "country": "USA", "notes": "Hosting the Final" },
+    { "city": "Los Angeles", "country": "USA" },
+    { "city": "Seattle", "country": "USA", "stadium": "Lumen Field" },
+    { "city": "San Francisco Bay Area", "country": "USA" },
+    { "city": "Dallas", "country": "USA", "stadium": "AT&T Stadium" },
+    { "city": "Houston", "country": "USA" },
+    { "city": "Kansas City", "country": "USA" },
+    { "city": "Atlanta", "country": "USA", "stadium": "Mercedes-Benz Stadium" },
+    { "city": "Miami", "country": "USA" },
+    { "city": "Philadelphia", "country": "USA", "stadium": "Lincoln Financial Field" },
+    { "city": "Boston", "country": "USA" },
+    { "city": "Toronto", "country": "Canada" },
+    { "city": "Vancouver", "country": "Canada", "stadium": "BC Place" },
+    { "city": "Mexico City", "country": "Mexico" },
+    { "city": "Guadalajara", "country": "Mexico" },
+    { "city": "Monterrey", "country": "Mexico" }
+  ],
+
+  "sample_group_stage_results": [
+    { "date": "2026-06-11", "home": "Mexico", "away": "South Africa", "score": "2-0", "group": "A" },
+    { "date": "2026-06-12", "home": "Canada", "away": "Bosnia and Herzegovina", "score": "1-1", "group": "B" },
+    { "date": "2026-06-16", "home": "Argentina", "away": "Algeria", "score": "3-0", "group": "F" },
+    { "date": "2026-06-17", "home": "England", "away": "Croatia", "score": "4-2", "group": "K" },
+    { "date": "2026-06-27", "home": "England", "away": "Panama", "score": "2-0", "group": "K" },
+    { "date": "2026-06-27", "home": "Argentina", "away": "Jordan", "score": "3-1", "group": "F" }
+  ],
+
+  "round_of_32_results": [
+    { "date": "2026-06-28", "home": "Canada", "away": "South Africa", "score": "1-0", "note": "Canada first team through to Round of 16" },
+    { "date": "2026-06-29", "home": "Brazil", "away": "Japan", "score": "2-1" },
+    { "date": "2026-06-29", "home": "Germany", "away": "Paraguay", "score": "1-1", "note": "Paraguay advances 4-3 on penalties" },
+    { "date": "2026-06-29", "home": "Netherlands", "away": "Morocco", "score": "1-1", "note": "Morocco advances 3-2 on penalties" },
+    { "date": "2026-06-30", "home": "Norway", "away": "Ivory Coast", "score": "2-1" },
+    { "date": "2026-06-30", "home": "France", "away": "Sweden", "score": "3-0" },
+    { "date": "2026-06-30", "home": "Mexico", "away": "Ecuador", "score": "2-0" },
+    { "date": "2026-07-01", "home": "England", "away": "DR Congo", "score": "2-1" },
+    { "date": "2026-07-01", "home": "Belgium", "away": "Senegal", "score": "3-2", "note": "after extra time" },
+    { "date": "2026-07-01", "home": "USA", "away": "Bosnia and Herzegovina", "score": "2-0" },
+    { "date": "2026-07-02", "home": "Spain", "away": "Austria", "score": "3-0" },
+    { "date": "2026-07-02", "home": "Portugal", "away": "Croatia", "score": "2-1" },
+    { "date": "2026-07-02", "home": "Switzerland", "away": "Algeria", "score": "2-0" },
+    { "date": "2026-07-03", "home": "Egypt", "away": "Australia", "score": "1-1", "note": "Egypt advances 4-2 on penalties" },
+    { "date": "2026-07-03", "home": "Argentina", "away": "Cape Verde", "score": "3-2" },
+    { "date": "2026-07-03", "home": "Colombia", "away": "Ghana", "score": "1-0" }
+  ],
+
+  "round_of_16_schedule": [
+    { "date": "2026-07-04", "home": "France", "away": "Paraguay", "score": "2-1", "venue": "Lincoln Financial Field, Philadelphia", "status": "completed" },
+    { "date": "2026-07-04", "home": "Morocco", "away": "Canada", "score": "3-0", "venue": "NRG Stadium, Houston", "status": "completed" },
+    { "date": "2026-07-05", "home": "England", "away": "Mexico", "score": "3-2", "venue": "MetLife Stadium, New York", "status": "completed", "note": "England advances to quarterfinals" },
+    { "date": "2026-07-05", "home": "Spain", "away": "Portugal", "score": "1-0", "venue": "Estadio Azteca, Mexico City", "status": "completed" },
+    { "date": "2026-07-06", "home": "United States", "away": "Belgium", "score": "2-1", "kickoff_local": "8:00 PM ET", "venue": "AT&T Stadium, Dallas", "status": "completed" },
+    { "date": "2026-07-06", "home": "Brazil", "away": "Norway", "score": "3-1", "kickoff_local": "3:00 PM PT", "venue": "Lumen Field, Seattle", "status": "completed" },
+    { "date": "2026-07-07", "home": "Argentina", "away": "Egypt", "score": "2-0", "kickoff_local": "12:00 PM ET", "venue": "Mercedes-Benz Stadium, Atlanta", "status": "completed" },
+    { "date": "2026-07-07", "home": "Colombia", "away": "Switzerland", "score": "1-1", "note": "Colombia advances 4-3 on penalties", "kickoff_local": "4:00 PM PT", "venue": "BC Place, Vancouver", "status": "completed" }
+  ],
+
+  "quarterfinals_schedule": [
+    { "date": "2026-07-09", "home": "France", "away": "Morocco", "kickoff_local": "3:00 PM ET", "venue": "Gillette Stadium, Boston", "status": "scheduled" },
+    { "date": "2026-07-10", "home": "England", "away": "Spain", "kickoff_local": "6:00 PM PT", "venue": "SoFi Stadium, Los Angeles", "status": "scheduled" },
+    { "date": "2026-07-11", "home": "United States", "away": "Argentina", "kickoff_local": "3:00 PM ET", "venue": "Hard Rock Stadium, Miami", "status": "scheduled" },
+    { "date": "2026-07-11", "home": "Brazil", "away": "Colombia", "kickoff_local": "8:00 PM CT", "venue": "Arrowhead Stadium, Kansas City", "status": "scheduled" }
+  ],
+
+  "notable_players_mentioned_in_coverage": [
+    { "name": "Jude Bellingham", "team": "England", "note": "Led England into the quarterfinals" },
+    { "name": "Romelu Lukaku", "team": "Belgium", "note": "Scored in Round of 32 win over Senegal" },
+    { "name": "Lionel Messi", "team": "Argentina", "note": "Featured in Argentina's Round of 32 win over Cape Verde" }
+  ],
+
+  "usage_notes": {
+    "branding": "Refer to the event descriptively (e.g. '2026 World Cup', '2026 Global Tournament') rather than using the FIFA emblem or trademarked wordmark styling in the UI.",
+    "data_freshness": "This is a static snapshot as of 2026-07-06. For a real submission, wire this in only as a fallback — the primary path should call a licensed sports-data API for genuinely live scores/status.",
+    "extension": "Add more sample fixtures/results in the same shape as needed for demo variety across host cities and rounds."
+  }
+}
