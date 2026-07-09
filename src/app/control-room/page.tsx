@@ -153,17 +153,51 @@ export default function ControlRoom() {
 
   const activeDeployments = staffUnits.filter(u => u.targetId);
 
-  // Optimistic Map Rendering for Gates
+  // Optimistic Map Rendering for Gates & Deployed Squads
   let optimisticCrowdData = crowdData;
-  if (crowdData && Object.keys(optimisticGates).length > 0) {
+  if (crowdData) {
     optimisticCrowdData = JSON.parse(JSON.stringify(crowdData));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (optimisticCrowdData as any)?.zones?.forEach((z: { type: string; id: string; is_closed: boolean; status: string }) => {
-      if (z.type === 'gate' && optimisticGates[z.id] !== undefined) {
-        z.is_closed = optimisticGates[z.id];
-        z.status = optimisticGates[z.id] ? 'red' : 'low';
-      }
-    });
+    
+    // 1. Apply gate overrides
+    if (Object.keys(optimisticGates).length > 0) {
+      optimisticCrowdData?.zones?.forEach((z: ControlRoomZone) => {
+        if (z.type === 'gate' && optimisticGates[z.id] !== undefined) {
+          z.is_closed = optimisticGates[z.id];
+          z.status = optimisticGates[z.id] ? 'red' : 'low';
+        }
+      });
+    }
+
+    // 2. Apply squad deployment crowd redistribution
+    if (activeDeployments.length > 0) {
+      activeDeployments.forEach(dept => {
+        const targetZoneId = dept.targetId;
+        if (!targetZoneId) return;
+
+        const zones = optimisticCrowdData?.zones || [];
+        const targetZone = zones.find((z: ControlRoomZone) => z.id === targetZoneId);
+        
+        if (targetZone && targetZone.occupancy_pct > 60) {
+          const originalOccupancy = targetZone.occupancy_pct;
+          const targetDrop = 30; // drop occupancy by 30%
+          const newOccupancy = Math.max(30, originalOccupancy - targetDrop);
+          const diffOccupancy = originalOccupancy - newOccupancy;
+          
+          targetZone.occupancy_pct = newOccupancy;
+          targetZone.status = newOccupancy > 80 ? 'red' : (newOccupancy > 50 ? 'medium' : 'low');
+
+          // Redistribute to other available zones of the same type under 60%
+          const otherZones = zones.filter((z: ControlRoomZone) => z.id !== targetZoneId && z.type === targetZone.type && !z.is_closed && z.occupancy_pct < 60);
+          if (otherZones.length > 0) {
+            const splitDiff = diffOccupancy / otherZones.length;
+            otherZones.forEach((oz: ControlRoomZone) => {
+              oz.occupancy_pct = Math.min(100, Math.round(oz.occupancy_pct + splitDiff));
+              oz.status = oz.occupancy_pct > 80 ? 'red' : (oz.occupancy_pct > 50 ? 'medium' : 'low');
+            });
+          }
+        }
+      });
+    }
   }
 
   // Poll for AI Alerts
