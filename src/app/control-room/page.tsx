@@ -9,6 +9,7 @@ import { MatchSwitcher } from '@/components/features/navigation/MatchSwitcher';
 import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
 import { AlertFeed, Alert } from '@/components/features/control-room/AlertFeed';
 import { KPISummaryStrip } from '@/components/features/control-room/KPISummaryStrip';
+import { useMatch } from '@/contexts/MatchContext';
 
 interface ControlRoomZone {
   id: string;
@@ -27,7 +28,39 @@ const getRandomMockEta = (): string => {
 
 export default function ControlRoom() {
   const router = useRouter();
+  const { match } = useMatch();
   const { data: crowdData, loading: crowdLoading, mutate: mutateCrowd } = useRealtimeCrowd();
+
+  const downloadRandomizedMatchDataset = () => {
+    if (!crowdData?.zones) return;
+    
+    const randomized = crowdData.zones.map((z: ControlRoomZone) => {
+      const occupancy = Math.floor(Math.random() * 80) + 15; // 15% to 95%
+      const wait = z.type === 'gate' ? Math.floor(Math.random() * 20) + 5 : 0;
+      const status = occupancy > 80 ? 'red' : (occupancy > 50 ? 'medium' : 'low');
+      return {
+        id: z.id,
+        name: z.name,
+        type: z.type,
+        occupancy_pct: occupancy,
+        wait_time_min: wait,
+        status,
+        capacity: 1000,
+        is_closed: false
+      };
+    });
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(randomized, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    const homeName = match?.home?.name || 'home';
+    const awayName = match?.away?.name || 'away';
+    const fileName = `crowd_data_${homeName.toLowerCase().replace(/\s+/g, '_')}_vs_${awayName.toLowerCase().replace(/\s+/g, '_')}.json`;
+    downloadAnchor.setAttribute("download", fileName);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
   
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [generatingAlerts, setGeneratingAlerts] = useState(false);
@@ -490,22 +523,31 @@ export default function ControlRoom() {
             Drag and drop a .JSON or .CSV file containing custom gate and stand occupancy states to test real-time AI alerting and operations dynamically.
           </p>
           
-          <div className="flex items-center gap-4 mb-6">
-            <a 
-              href="/stadium_crowd_sample.json" 
-              download 
-              className="text-xs text-primary hover:text-primary/80 transition-colors uppercase font-semibold tracking-widest underline decoration-primary/30 hover:decoration-primary"
+          <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
+            <button 
+              onClick={downloadRandomizedMatchDataset}
+              className="text-xs bg-primary/10 border border-primary/30 text-primary hover:bg-primary/25 transition-all px-3 py-1.5 rounded uppercase font-bold tracking-widest flex items-center gap-2"
             >
-              Download Sample JSON
-            </a>
-            <span className="text-foreground/20 font-mono">|</span>
-            <a 
-              href="/stadium_crowd_sample.csv" 
-              download 
-              className="text-xs text-primary hover:text-primary/80 transition-colors uppercase font-semibold tracking-widest underline decoration-primary/30 hover:decoration-primary"
-            >
-              Download Sample CSV
-            </a>
+              📊 Generate crowd data for {match?.home?.name || 'Home'} vs {match?.away?.name || 'Away'}
+            </button>
+            <span className="hidden md:block text-foreground/20 font-mono">|</span>
+            <div className="flex gap-4">
+              <a 
+                href="/stadium_crowd_sample.json" 
+                download 
+                className="text-xs text-primary hover:text-primary/80 transition-colors uppercase font-semibold tracking-widest underline decoration-primary/30 hover:decoration-primary"
+              >
+                Sample JSON
+              </a>
+              <span className="text-foreground/20 font-mono">|</span>
+              <a 
+                href="/stadium_crowd_sample.csv" 
+                download 
+                className="text-xs text-primary hover:text-primary/80 transition-colors uppercase font-semibold tracking-widest underline decoration-primary/30 hover:decoration-primary"
+              >
+                Sample CSV
+              </a>
+            </div>
           </div>
 
           <input 
