@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { ShieldAlert } from 'lucide-react';
 
 export default function ControlRoomLogin() {
-  const router = useRouter();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +21,7 @@ export default function ControlRoomLogin() {
       });
 
       if (res.ok) {
-        router.push('/control-room');
+        window.location.href = '/control-room';
       } else {
         setError('Incorrect password');
       }
