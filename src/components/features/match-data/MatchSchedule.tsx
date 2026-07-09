@@ -79,7 +79,7 @@ export function MatchSchedule() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <span className={`fi fi-${FLAG_MAP[match.home] || 'xx'} text-3xl rounded shadow-md object-cover`}></span>
+                    <span className={`fi fi-${FLAG_MAP[match.home] || 'un'} text-3xl rounded shadow-md object-cover`}></span>
                     <span className="font-bold text-xl">{match.home}</span>
                   </div>
                   {match.score && <span className="font-mono font-black text-2xl tracking-tighter">{match.score.split('-')[0]}</span>}
@@ -87,7 +87,7 @@ export function MatchSchedule() {
                 
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <span className={`fi fi-${FLAG_MAP[match.away] || 'xx'} text-3xl rounded shadow-md object-cover`}></span>
+                    <span className={`fi fi-${FLAG_MAP[match.away] || 'un'} text-3xl rounded shadow-md object-cover`}></span>
                     <span className="font-bold text-xl">{match.away}</span>
                   </div>
                   {match.score && <span className="font-mono font-black text-2xl tracking-tighter">{match.score.split('-')[1]}</span>}
