@@ -12,7 +12,6 @@ import { LanguageSwitcher } from '@/components/features/navigation/LanguageSwitc
 import { MatchSwitcher } from '@/components/features/navigation/MatchSwitcher';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useMatch } from '@/contexts/MatchContext';
 
 const ScrollReveal = ({ children, delay = 0, speed = 1 }: { children: React.ReactNode, delay?: number, speed?: number }) => {
   const ref = useRef(null);
@@ -40,7 +39,6 @@ const ScrollReveal = ({ children, delay = 0, speed = 1 }: { children: React.Reac
 
 export default function Home() {
   const { t } = useLanguage();
-  const { match } = useMatch();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {

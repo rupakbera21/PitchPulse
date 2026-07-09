@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import NextImage from 'next/image';
 import { motion } from 'framer-motion';
-import { Ticket, ScanLine, Zap } from 'lucide-react';
+import { ScanLine, Zap } from 'lucide-react';
 import { useMatch } from '@/contexts/MatchContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PredictionCard } from './PredictionCard';

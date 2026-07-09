@@ -67,5 +67,5 @@ export function useRealtimeCrowd() {
     };
   }, []);
 
-  return { data, loading };
+  return { data, loading, mutate: setData };
 }

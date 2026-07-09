@@ -27,13 +27,80 @@ const getRandomMockEta = (): string => {
 
 export default function ControlRoom() {
   const router = useRouter();
-  const { data: crowdData, loading: crowdLoading } = useRealtimeCrowd();
+  const { data: crowdData, loading: crowdLoading, mutate: mutateCrowd } = useRealtimeCrowd();
   
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [generatingAlerts, setGeneratingAlerts] = useState(false);
   const [aiLatency, setAiLatency] = useState<number | null>(null);
   const [resolvedAlerts, setResolvedAlerts] = useState<Set<number>>(new Set());
   const [optimisticGates, setOptimisticGates] = useState<Record<string, boolean>>({});
+  
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDataUpload = async (file: File) => {
+    setUploadError(null);
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let parsedZones: any[] = [];
+
+        if (file.name.endsWith('.json')) {
+          parsedZones = JSON.parse(text);
+        } else if (file.name.endsWith('.csv')) {
+          const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+          if (lines.length < 2) {
+            throw new Error('CSV must contain a header and at least one data row.');
+          }
+
+          const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+          parsedZones = lines.slice(1).map(line => {
+            const values = line.split(',').map(v => v.trim());
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const row: any = {};
+            headers.forEach((header, index) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              let val: any = values[index];
+              if (['occupancy_pct', 'wait_time_min', 'capacity'].includes(header)) {
+                val = Number(val) || 0;
+              } else if (header === 'is_closed') {
+                val = val === 'true' || val === '1';
+              }
+              row[header] = val;
+            });
+            return row;
+          });
+        } else {
+          throw new Error('Unsupported file extension. Only .json or .csv are supported.');
+        }
+
+        // POST to the API endpoint
+        const res = await fetch('/api/crowd', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'upload', newZonesData: parsedZones })
+        });
+
+        if (res.ok) {
+          const responseData = await res.json();
+          if (mutateCrowd) {
+            mutateCrowd(responseData.state);
+          }
+        } else {
+          const errJson = await res.json();
+          throw new Error(errJson.error || 'Server rejected the file.');
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Error parsing file.';
+        setUploadError(message);
+      }
+    };
+
+    reader.readAsText(file);
+  };
   
   const [activeCamera, setActiveCamera] = useState<number | null>(null);
   const [deployingUnitId, setDeployingUnitId] = useState<number | null>(null);
@@ -364,6 +431,68 @@ export default function ControlRoom() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Jury Testing: Custom Dataset Uploader */}
+      <div 
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files[0]) { handleDataUpload(e.dataTransfer.files[0]); } }}
+        className={`mt-8 p-8 border rounded-xl transition-all duration-300 ${
+          isDragging 
+            ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(0,210,106,0.2)]' 
+            : 'border-primary/20 bg-secondary/10 hover:border-primary/40 hover:bg-secondary/15'
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="p-4 bg-primary/10 rounded-full text-primary text-2xl mb-4 select-none">
+            📂
+          </div>
+          <h3 className="text-lg font-bold uppercase tracking-widest text-white mb-2">
+            Upload Custom Stadium Crowd Dataset
+          </h3>
+          <p className="text-xs text-foreground/50 max-w-md uppercase tracking-wider mb-6 leading-relaxed">
+            Drag and drop a .JSON or .CSV file containing custom gate and stand occupancy states to test real-time AI alerting and operations dynamically.
+          </p>
+          
+          <div className="flex items-center gap-4 mb-6">
+            <a 
+              href="/stadium_crowd_sample.json" 
+              download 
+              className="text-xs text-primary hover:text-primary/80 transition-colors uppercase font-semibold tracking-widest underline decoration-primary/30 hover:decoration-primary"
+            >
+              Download Sample JSON
+            </a>
+            <span className="text-foreground/20 font-mono">|</span>
+            <a 
+              href="/stadium_crowd_sample.csv" 
+              download 
+              className="text-xs text-primary hover:text-primary/80 transition-colors uppercase font-semibold tracking-widest underline decoration-primary/30 hover:decoration-primary"
+            >
+              Download Sample CSV
+            </a>
+          </div>
+
+          <input 
+            type="file" 
+            accept=".json,.csv"
+            onChange={(e) => { if (e.target.files?.[0]) handleDataUpload(e.target.files[0]); }}
+            className="hidden" 
+            id="jury-uploader" 
+          />
+          <label 
+            htmlFor="jury-uploader" 
+            className="px-6 py-3 border border-primary text-primary bg-primary/5 hover:bg-primary/25 rounded-lg text-xs font-bold uppercase tracking-widest cursor-pointer transition-all active:scale-95 select-none"
+          >
+            Select File
+          </label>
+          
+          {uploadError && (
+            <p className="text-xs text-danger uppercase tracking-widest mt-4 font-mono">
+              ⚠️ {uploadError}
+            </p>
+          )}
         </div>
       </div>
 

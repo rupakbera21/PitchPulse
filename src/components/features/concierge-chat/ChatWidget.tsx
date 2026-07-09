@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useConciergeChat } from '@/hooks/useConciergeChat';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Canvas } from '@react-three/fiber';
 import { TriondaBall3D } from './TriondaBall3D';
-import { MessageSquare, X, Send, Loader2, Sparkles, Bot } from 'lucide-react';
+import { X, Send, Sparkles } from 'lucide-react';
 
 /**
  * AI Concierge Chat Widget
@@ -19,15 +19,15 @@ export function ChatWidget() {
   const { messages, input, setInput, isLoading, sendMessage } = useConciergeChat();
   const { showSplash } = useLanguage();
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-  };
+  }, [isOpen]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isOpen]);
+  }, [messages, isOpen, scrollToBottom]);
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);

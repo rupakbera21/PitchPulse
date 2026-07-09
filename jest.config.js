@@ -12,6 +12,7 @@ const config = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.js',
   },
+  setupFiles: ['<rootDir>/jest.setup.js'],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   testMatch: ['<rootDir>/src/__tests__/**/*.test.(ts|tsx)'],
 };

@@ -1,0 +1,9 @@
+id,name,type,occupancy_pct,wait_time_min,status,capacity,is_closed
+gate_n,North Gate,gate,85,32,red,2500,false
+gate_s,South Gate,gate,40,12,medium,2500,false
+gate_e,East Gate,gate,15,2,low,2500,false
+gate_w,West Gate,gate,60,18,high,2500,false
+stand_a,General Admission A,stand,75,0,high,15000,false
+stand_b,General Admission B,stand,50,0,medium,15000,false
+stand_c,East Stand,stand,20,0,low,10000,false
+stand_d,West Stand,stand,95,0,red,10000,false

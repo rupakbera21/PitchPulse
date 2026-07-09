@@ -4,7 +4,7 @@ import { useRealtimeCrowd } from '@/hooks/useRealtimeData';
 import { useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMatch } from '@/contexts/MatchContext';
-import { isStandClosed, getZoneColor, getBorderColor, getBorderRadius } from '@/lib/stadium-routing';
+import { getZoneColor, getBorderColor, getBorderRadius } from '@/lib/stadium-routing';
 
 /**
  * Main 2.5D Stadium Map Component
@@ -188,7 +188,6 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
             
             if (zone.type === 'stand') {
               // Create the bowl effect: Upper tiers are higher
-              const baseZ = zone.id.startsWith('upper') ? 40 : 15;
               const closed = closedZones[zone.id];
               const isTargetHovered = hoveredZoneId === zone.id;
               
