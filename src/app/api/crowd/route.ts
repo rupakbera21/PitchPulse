@@ -36,8 +36,10 @@ export async function POST(req: Request) {
       // Re-map and validate schema to ensure no runtime errors
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updatedZones = newZonesData.map((z: any) => {
-        const existingZone = crowdState.zones.find((ez) => ez.id === z.id) || ({} as any);
+        const existingZone = crowdState.zones.find((ez) => ez.id === z.id) || ({} as Partial<CrowdZone>);
         return {
+          cx: 0,
+          cy: 0,
           ...existingZone,
           id: String(z.id || ''),
           name: String(z.name || existingZone.name || ''),
@@ -47,7 +49,7 @@ export async function POST(req: Request) {
           status: String(z.status || 'low'),
           capacity: Math.max(1, Number(z.capacity ?? 1000)),
           is_closed: Boolean(z.is_closed ?? false)
-        };
+        } as unknown as CrowdZone;
       });
 
       // Override the server-side simulation state
