@@ -69,10 +69,12 @@ export default function ControlRoom() {
   const [optimisticGates, setOptimisticGates] = useState<Record<string, boolean>>({});
   
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDataUpload = async (file: File) => {
     setUploadError(null);
+    setUploadSuccess(null);
     const reader = new FileReader();
 
     reader.onload = async (e) => {
@@ -122,6 +124,10 @@ export default function ControlRoom() {
           if (mutateCrowd) {
             mutateCrowd(responseData.state);
           }
+          setUploadSuccess(`Successfully uploaded and applied ${file.name}`);
+          setTimeout(() => {
+            setUploadSuccess(null);
+          }, 4000);
         } else {
           const errJson = await res.json();
           throw new Error(errJson.error || 'Server rejected the file.');
@@ -567,6 +573,12 @@ export default function ControlRoom() {
           {uploadError && (
             <p className="text-xs text-danger uppercase tracking-widest mt-4 font-mono">
               ⚠️ {uploadError}
+            </p>
+          )}
+
+          {uploadSuccess && (
+            <p className="text-xs text-primary uppercase tracking-widest mt-4 font-mono animate-pulse">
+              ✅ {uploadSuccess}
             </p>
           )}
         </div>
