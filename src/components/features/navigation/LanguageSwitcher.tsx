@@ -16,6 +16,14 @@ export function LanguageSwitcher() {
   const { language, setLanguage, showSplash, setShowSplash } = useLanguage();
   const currentLoc = LOCATIONS.find(loc => loc.lang === language) || LOCATIONS[0];
   const [loading, setLoading] = useState(false);
+  const [isFading, setIsFading] = useState(false);
+
+  const dismissSplash = () => {
+    setIsFading(true);
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 300);
+  };
 
   const requestLocation = () => {
     setLoading(true);
@@ -38,19 +46,24 @@ export function LanguageSwitcher() {
 
           setLanguage(detectedLang as LanguageCode);
           setLoading(false);
-          setShowSplash(false);
+          dismissSplash();
         },
         (error) => {
           console.warn("Geolocation denied or failed", error);
           setLanguage('EN');
           setLoading(false);
-          setShowSplash(false);
+          dismissSplash();
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 2000,
+          maximumAge: 300000 // 5 min cache
         }
       );
     } else {
       setLanguage('EN');
       setLoading(false);
-      setShowSplash(false);
+      dismissSplash();
     }
   };
 
@@ -91,7 +104,7 @@ export function LanguageSwitcher() {
 
       {/* Full-Screen Entry Overlay */}
       {showSplash && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background animate-in fade-in duration-300">
+        <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background animate-in fade-in duration-300 transition-opacity ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <div className="bg-white/5 border border-white/10 p-10 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col items-center max-w-md text-center animate-in zoom-in-95 duration-500">
             <h2 className="text-3xl font-black italic uppercase tracking-widest mb-2 text-white">PitchPulse.</h2>
             <div className="w-12 h-1 bg-primary mb-6 rounded-full" />
@@ -110,7 +123,7 @@ export function LanguageSwitcher() {
               </button>
               <button 
                 type="button"
-                onClick={() => { setLoading(false); setShowSplash(false); }}
+                onClick={() => { setLoading(false); dismissSplash(); }}
                 className="w-full bg-white/5 text-foreground/70 font-bold uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-white/10 hover:text-foreground transition-colors border border-white/10"
               >
                 Skip
