@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { POST } from '@/app/api/chat/route';
+import { POST } from '../src/app/api/chat/route';
 
 describe('Concierge Chat API Input Validation & Security', () => {
   it('rejects invalid non-string payloads with 400 status', async () => {

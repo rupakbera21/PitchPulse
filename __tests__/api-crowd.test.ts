@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { POST } from '@/app/api/crowd/route';
+import { POST } from '../src/app/api/crowd/route';
 
 describe('Crowd API Override & Custom Uploader Bounds', () => {
   it('rejects custom upload data if zones are not an array', async () => {

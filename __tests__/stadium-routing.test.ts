@@ -2,7 +2,7 @@
  * Unit tests for stadium-routing utilities
  */
 
-import { isStandClosed, getZoneColor, getBorderColor, getBorderRadius } from '@/lib/stadium-routing';
+import { isStandClosed, getZoneColor, getBorderColor, getBorderRadius } from '../src/lib/stadium-routing';
 
 const mockCrowdData = {
   zones: [

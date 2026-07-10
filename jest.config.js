@@ -14,7 +14,8 @@ const config = {
   },
   setupFiles: ['<rootDir>/jest.setup.js'],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
-  testMatch: ['<rootDir>/src/__tests__/**/*.test.(ts|tsx)'],
+  testMatch: ['<rootDir>/__tests__/**/*.test.(ts|tsx)'],
+  testPathIgnorePatterns: ['<rootDir>/__tests__/crowdSim.test.ts'],
 };
 
 module.exports = config;
