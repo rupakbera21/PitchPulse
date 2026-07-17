@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server';
-import { simulateCrowdUpdate, initialCrowdState, STADIUM_ZONES_CONFIG } from '@/services/crowdSim';
-
-type CrowdZone = typeof STADIUM_ZONES_CONFIG[0] & { is_closed?: boolean };
-type CrowdState = {
-  total_fans: number;
-  busiest_gate: string;
-  match_status: string;
-  zones: CrowdZone[];
-};
+import { simulateCrowdUpdate, initialCrowdState } from '@/services/crowdSim';
+import { CrowdState, CrowdZone } from '@/lib/types';
 
 let crowdState: CrowdState = initialCrowdState as CrowdState;
 let lastUpdateTime = Date.now();
@@ -34,8 +27,7 @@ export async function POST(req: Request) {
       }
 
       // Re-map and validate schema to ensure no runtime errors
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const updatedZones = newZonesData.map((z: any) => {
+      const updatedZones = newZonesData.map((z: Partial<CrowdZone>) => {
         const existingZone = crowdState.zones.find((ez) => ez.id === z.id) || ({} as Partial<CrowdZone>);
         return {
           cx: 0,
@@ -57,8 +49,7 @@ export async function POST(req: Request) {
       
       // Recalculate total_fans based on capacities and occupancies
       crowdState.total_fans = updatedZones.reduce(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (sum: number, z: any) => sum + Math.round((z.capacity * z.occupancy_pct) / 100),
+        (sum: number, z: CrowdZone) => sum + Math.round(((z.capacity ?? 1000) * z.occupancy_pct) / 100),
         0
       );
 

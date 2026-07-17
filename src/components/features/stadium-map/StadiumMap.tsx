@@ -6,15 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useMatch } from '@/contexts/MatchContext';
 import { getZoneColor, getBorderColor, getBorderRadius } from '@/lib/stadium-routing';
 
+import { CrowdState, CrowdZone } from '@/lib/types';
+
 /**
  * Main 2.5D Stadium Map Component
  * Handles the display of the stadium, live occupancy, routing overlays, and Right Insights panel.
  */
-type ZoneData = { id: string; type: string; cx: number; cy: number; w: number; h: number; status: string; occupancy_pct: number; is_closed?: boolean; wait_time_min?: number; name: string; [key: string]: unknown };
 type DeploymentUnit = { id: number | string; hex?: string; color?: string; targetId?: string; [key: string]: unknown };
-type CrowdData = { total_fans: number; zones: ZoneData[]; [key: string]: unknown };
 
-export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = null, crowdData = null }: { compact?: boolean, deployments?: DeploymentUnit[], hoveredZoneId?: string | null, crowdData?: CrowdData | null }) {
+export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = null, crowdData = null }: { compact?: boolean, deployments?: DeploymentUnit[], hoveredZoneId?: string | null, crowdData?: CrowdState | null }) {
   const { data: realtimeData, loading } = useRealtimeCrowd();
   const { match } = useMatch();
   
@@ -23,7 +23,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
   
   // Default zoom out once for public view (if not compact, scale = 0.8)
   const [scale, setScale] = useState(compact ? 1 : 0.8);
-  const [hoveredZone, setHoveredZone] = useState<ZoneData | null>(null);
+  const [hoveredZone, setHoveredZone] = useState<CrowdZone | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -31,12 +31,12 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
   const closedZones = useMemo(() => {
     if (!data?.zones) return {};
     const closedMap: Record<string, boolean> = {};
-    const gateNClosed = data.zones.find((z: ZoneData) => z.id === 'gate_n')?.is_closed;
-    const gateSClosed = data.zones.find((z: ZoneData) => z.id === 'gate_s')?.is_closed;
-    const gateEClosed = data.zones.find((z: ZoneData) => z.id === 'gate_e')?.is_closed;
-    const gateWClosed = data.zones.find((z: ZoneData) => z.id === 'gate_w')?.is_closed;
+    const gateNClosed = data.zones.find((z: CrowdZone) => z.id === 'gate_n')?.is_closed;
+    const gateSClosed = data.zones.find((z: CrowdZone) => z.id === 'gate_s')?.is_closed;
+    const gateEClosed = data.zones.find((z: CrowdZone) => z.id === 'gate_e')?.is_closed;
+    const gateWClosed = data.zones.find((z: CrowdZone) => z.id === 'gate_w')?.is_closed;
 
-    data.zones.forEach((zone: ZoneData) => {
+    data.zones.forEach((zone: CrowdZone) => {
       if (zone.type === 'stand') {
         let isClosed = !!zone.is_closed;
         if (zone.id.includes('_n') && gateNClosed) isClosed = true;
@@ -157,7 +157,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
           <div className="absolute inset-0 bg-primary/5 rounded-[40%] border border-primary/10 shadow-[0_0_100px_rgba(0,210,106,0.1)] pointer-events-none scale-110"></div>
 
           {/* Zones */}
-          {data.zones.map((zone: ZoneData) => {
+          {data.zones.map((zone: CrowdZone) => {
             const isHovered = hoveredZone?.id === zone.id;
             
             if (zone.type === 'pitch') {
@@ -260,7 +260,7 @@ export function StadiumMap({ compact = false, deployments = [], hoveredZoneId = 
 
               {/* Deployments Animation */}
               {deployments.map((deployment: DeploymentUnit) => {
-                const target = data.zones.find((z: ZoneData) => z.id === deployment.targetId);
+                const target = data.zones.find((z: CrowdZone) => z.id === deployment.targetId);
                 if (!target) return null;
                 const color = deployment.hex || (deployment.color?.includes('accent') ? '#eab308' : '#00d26a');
                 return (

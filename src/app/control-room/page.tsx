@@ -10,17 +10,8 @@ import { StadiumMap } from '@/components/features/stadium-map/StadiumMap';
 import { AlertFeed, Alert } from '@/components/features/control-room/AlertFeed';
 import { KPISummaryStrip } from '@/components/features/control-room/KPISummaryStrip';
 import { useMatch } from '@/contexts/MatchContext';
-
-interface ControlRoomZone {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
-  occupancy_pct: number;
-  is_closed?: boolean;
-  wait_time_min?: number;
-  [key: string]: unknown;
-}
+import { CrowdZone } from '@/lib/types';
+type ControlRoomZone = CrowdZone & { [key: string]: unknown };
 
 const getRandomMockEta = (): string => {
   return `${Math.floor(Math.random() * 3) + 1}m ${Math.floor(Math.random() * 60).toString().padStart(2, '0')}s`;
@@ -80,8 +71,7 @@ export default function ControlRoom() {
     reader.onload = async (e) => {
       try {
         const text = e.target?.result as string;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let parsedZones: any[] = [];
+        let parsedZones: Partial<ControlRoomZone>[] = [];
 
         if (file.name.endsWith('.json')) {
           parsedZones = JSON.parse(text);
@@ -94,17 +84,15 @@ export default function ControlRoom() {
           const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
           parsedZones = lines.slice(1).map(line => {
             const values = line.split(',').map(v => v.trim());
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const row: any = {};
+            const row: Partial<ControlRoomZone> = {};
             headers.forEach((header, index) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              let val: any = values[index];
+              let val: string | number | boolean = values[index];
               if (['occupancy_pct', 'wait_time_min', 'capacity'].includes(header)) {
                 val = Number(val) || 0;
               } else if (header === 'is_closed') {
                 val = val === 'true' || val === '1';
               }
-              row[header] = val;
+              row[header as keyof ControlRoomZone] = val as never;
             });
             return row;
           });

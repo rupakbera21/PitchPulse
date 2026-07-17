@@ -33,6 +33,26 @@ interface FallbackData {
   quarterfinals_schedule?: FallbackMatch[];
 }
 
+interface RawGitHubTeam {
+  id: string | number;
+  name_en: string;
+}
+
+interface RawGitHubMatch {
+  id: string;
+  local_date?: string;
+  stadium_id?: string;
+  home_team_id?: string | number;
+  away_team_id?: string | number;
+  home_team_label?: string;
+  away_team_label?: string;
+  home_score?: string | number | null;
+  away_score?: string | number | null;
+  finished?: boolean | string;
+  time_elapsed?: string;
+  type?: string;
+}
+
 let fallbackData: FallbackData | null = null;
 
 function loadFallbackData(): FallbackData {
@@ -105,14 +125,12 @@ export async function GET() {
       
       // Map teams by ID
       const teamsMap: Record<string, string> = {};
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rawTeams.forEach((t: any) => {
-        teamsMap[t.id] = t.name_en;
+      rawTeams.forEach((t: RawGitHubTeam) => {
+        teamsMap[String(t.id)] = t.name_en;
       });
 
       const live_schedule = rawMatches
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .filter((m: any) => {
+        .filter((m: RawGitHubMatch) => {
           if (!m.local_date) return false;
           const [datePart] = m.local_date.split(' ');
           const [month, day, year] = datePart.split('/');
@@ -120,8 +138,7 @@ export async function GET() {
           const startDate = new Date('2026-06-25T00:00:00Z');
           return matchDate >= startDate;
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((m: any) => {
+        .map((m: RawGitHubMatch) => {
           let isoDate = '';
           if (m.local_date) {
             const [d, t] = m.local_date.split(' ');
@@ -134,8 +151,8 @@ export async function GET() {
             time: m.local_date ? m.local_date.split(' ')[1] : '',
             isoDate,
             stadium: `Stadium ${m.stadium_id}`,
-            home: (m.home_team_id !== '0' && m.home_team_id !== 0) ? (teamsMap[m.home_team_id] || `Team ${m.home_team_id}`) : (m.home_team_label || 'TBD'),
-            away: (m.away_team_id !== '0' && m.away_team_id !== 0) ? (teamsMap[m.away_team_id] || `Team ${m.away_team_id}`) : (m.away_team_label || 'TBD'),
+            home: (m.home_team_id && m.home_team_id !== '0' && m.home_team_id !== 0) ? (teamsMap[String(m.home_team_id)] || `Team ${m.home_team_id}`) : (m.home_team_label || 'TBD'),
+            away: (m.away_team_id && m.away_team_id !== '0' && m.away_team_id !== 0) ? (teamsMap[String(m.away_team_id)] || `Team ${m.away_team_id}`) : (m.away_team_label || 'TBD'),
             score: `${m.home_score !== 'null' ? m.home_score : 0}-${m.away_score !== 'null' ? m.away_score : 0}`,
             status: m.finished === 'TRUE' || m.finished === true ? 'completed' : (m.time_elapsed === 'notstarted' ? 'scheduled' : 'live'),
             type: m.type

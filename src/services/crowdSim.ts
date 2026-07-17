@@ -34,8 +34,7 @@ export const initialCrowdState = {
   zones: STADIUM_ZONES_CONFIG
 };
 
-type CrowdZone = { id: string; type: string; occupancy_pct: number; status: string; is_closed?: boolean; wait_time_min?: number; name: string; [key: string]: unknown; };
-type CrowdState = { zones: CrowdZone[]; match_status: string; total_fans: number; busiest_gate: string; [key: string]: unknown; };
+import { CrowdState, CrowdZone } from '@/lib/types';
 
 export function simulateCrowdUpdate(currentState: CrowdState) {
   let busiestGate = currentState.zones.find((z) => z.id.startsWith('gate')) || currentState.zones[4];
