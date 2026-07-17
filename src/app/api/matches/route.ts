@@ -32,6 +32,7 @@ interface FallbackData {
   round_of_16_schedule: FallbackMatch[];
   quarterfinals_schedule?: FallbackMatch[];
   semifinals_schedule?: FallbackMatch[];
+  third_place_schedule?: FallbackMatch[];
   final_schedule?: FallbackMatch[];
 }
 
@@ -175,6 +176,7 @@ export async function GET() {
         ...fallback.round_of_16_schedule,
         ...(fallback.quarterfinals_schedule || []),
         ...(fallback.semifinals_schedule || []),
+        ...(fallback.third_place_schedule || []),
         ...(fallback.final_schedule || [])
       ];
       

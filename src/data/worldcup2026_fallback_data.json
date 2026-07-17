@@ -5,16 +5,16 @@
     "name": "2026 World Cup",
     "edition": "23rd",
     "start_date": "2026-06-11",
-    "end_date": "2026-07-19",
+    "end_date": "2026-07-20",
     "host_countries": ["United States", "Canada", "Mexico"],
     "host_cities_count": 16,
     "teams": 48,
     "total_matches": 104,
     "group_stage_matches": 72,
     "knockout_stage_matches": 32,
-    "current_stage_as_of_2026_07_06": "Round of 16",
+    "current_stage_as_of_2026_07_06": "Knockout Stages",
     "final_venue": "New York New Jersey Stadium (MetLife Stadium), East Rutherford, New Jersey",
-    "final_date": "2026-07-19"
+    "final_date": "2026-07-20"
   },
 
   "host_cities_stadiums": [
@@ -76,19 +76,23 @@
   ],
 
   "quarterfinals_schedule": [
-    { "date": "2026-07-09", "home": "France", "away": "Morocco", "score": "2-0", "kickoff_local": "3:00 PM ET", "venue": "Gillette Stadium, Boston", "status": "completed", "type": "qf" },
-    { "date": "2026-07-10", "home": "England", "away": "Spain", "score": "1-2", "kickoff_local": "6:00 PM PT", "venue": "SoFi Stadium, Los Angeles", "status": "completed", "type": "qf" },
-    { "date": "2026-07-11", "home": "United States", "away": "Argentina", "score": "1-3", "kickoff_local": "3:00 PM ET", "venue": "Hard Rock Stadium, Miami", "status": "completed", "type": "qf" },
-    { "date": "2026-07-11", "home": "Brazil", "away": "Colombia", "score": "1-0", "kickoff_local": "8:00 PM CT", "venue": "Arrowhead Stadium, Kansas City", "status": "completed", "type": "qf" }
+    { "date": "2026-07-11", "home": "France", "away": "Morocco", "score": "2-1", "kickoff_local": "3:00 PM ET", "venue": "Gillette Stadium, Boston", "status": "completed", "type": "qf" },
+    { "date": "2026-07-11", "home": "England", "away": "Spain", "score": "0-2", "kickoff_local": "6:00 PM PT", "venue": "SoFi Stadium, Los Angeles", "status": "completed", "type": "qf" },
+    { "date": "2026-07-12", "home": "United States", "away": "Brazil", "score": "1-3", "kickoff_local": "3:00 PM ET", "venue": "Hard Rock Stadium, Miami", "status": "completed", "type": "qf" },
+    { "date": "2026-07-12", "home": "Argentina", "away": "Colombia", "score": "2-0", "kickoff_local": "8:00 PM CT", "venue": "Arrowhead Stadium, Kansas City", "status": "completed", "type": "qf" }
   ],
 
   "semifinals_schedule": [
-    { "date": "2026-07-14", "home": "France", "away": "Spain", "score": "1-2", "kickoff_local": "8:00 PM ET", "venue": "AT&T Stadium, Dallas", "status": "completed", "type": "sf" },
-    { "date": "2026-07-15", "home": "Argentina", "away": "Brazil", "score": "2-1", "kickoff_local": "8:00 PM ET", "venue": "Mercedes-Benz Stadium, Atlanta", "status": "completed", "type": "sf" }
+    { "date": "2026-07-15", "home": "France", "away": "Spain", "score": "1-2", "kickoff_local": "8:00 PM ET", "venue": "AT&T Stadium, Dallas", "status": "completed", "type": "sf" },
+    { "date": "2026-07-16", "home": "Brazil", "away": "Argentina", "score": "1-2", "kickoff_local": "8:00 PM ET", "venue": "Mercedes-Benz Stadium, Atlanta", "status": "completed", "type": "sf" }
+  ],
+
+  "third_place_schedule": [
+    { "date": "2026-07-19", "home": "France", "away": "Brazil", "kickoff_local": "4:00 PM ET", "venue": "Hard Rock Stadium, Miami", "status": "scheduled", "type": "3rd" }
   ],
 
   "final_schedule": [
-    { "date": "2026-07-19", "home": "Spain", "away": "Argentina", "kickoff_local": "3:00 PM ET", "venue": "MetLife Stadium, New York", "status": "scheduled", "type": "final" }
+    { "date": "2026-07-20", "home": "Argentina", "away": "Spain", "kickoff_local": "3:00 PM ET", "venue": "MetLife Stadium, New York", "status": "scheduled", "type": "final" }
   ],
 
   "notable_players_mentioned_in_coverage": [
