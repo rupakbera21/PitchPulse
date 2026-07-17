@@ -19,7 +19,7 @@ export type Match = {
   gate: string;
   block: string;
   seat: string;
-  stageKey: 'stage_group' | 'stage_round_of_16' | 'stage_quarter_final' | 'stage_semi_final' | 'stage_final';
+  stageKey: 'stage_group' | 'stage_round_of_16' | 'stage_quarter_final' | 'stage_semi_final' | 'stage_final' | 'stage_third_place';
 };
 
 const FLAG_MAP: Record<string, string> = {
@@ -115,7 +115,8 @@ export function MatchProvider({ children }: { children: ReactNode }) {
             if (m.type === 'qf') stageKey = 'stage_quarter_final';
             else if (m.type === 'sf') stageKey = 'stage_semi_final';
             else if (m.type === 'r32' || m.type === 'r16') stageKey = 'stage_round_of_16';
-            else if (m.type === 'final' || m.type === 'third') stageKey = 'stage_final';
+            else if (m.type === 'final') stageKey = 'stage_final';
+            else if (m.type === 'third') stageKey = 'stage_third_place';
 
             return {
               id: m.match_id || `dynamic_${index}`,
@@ -137,7 +138,7 @@ export function MatchProvider({ children }: { children: ReactNode }) {
           const upcoming = mapped.filter((m) => new Date(m.date).getTime() > now);
           if (upcoming.length > 0) {
             // Prioritize the Final match if it is upcoming
-            const finals = upcoming.filter(m => m.stageKey === 'stage_final' && m.id === '104');
+            const finals = upcoming.filter(m => m.stageKey === 'stage_final' && (m.id === '104' || m.id === 'M104'));
             const active = finals.length > 0 ? finals[0] : upcoming.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
             setMatchState(active);
           } else {
