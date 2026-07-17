@@ -17,7 +17,7 @@ import { MatchScheduleItem } from '../src/lib/types';
 describe('TournamentBracket Component', () => {
   it('renders the tournament bracket visually', () => {
     const mockFixtures = [
-      { type: 'qf', home: 'Home1', away: 'Away1', score: '0-0', status: 'live' }
+      { type: 'final', home: 'Home1', away: 'Away1', score: '0-0', status: 'live' }
     ];
     render(<TournamentBracket fixtures={mockFixtures as MatchScheduleItem[]} />);
     

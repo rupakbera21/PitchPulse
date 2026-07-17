@@ -15,7 +15,7 @@ const LOCATIONS = [
 export function LanguageSwitcher() {
   const { language, setLanguage, showSplash, setShowSplash } = useLanguage();
   const currentLoc = LOCATIONS.find(loc => loc.lang === language) || LOCATIONS[0];
-  const [loading, setLoading] = useState(false);
+
   const [isFading, setIsFading] = useState(false);
 
   const dismissSplash = () => {
@@ -70,10 +70,10 @@ export function LanguageSwitcher() {
         
         {/* Visual content (sitting behind the invisible select) */}
         <div className="relative flex items-center gap-3 px-4 py-2 pointer-events-none z-10">
-          <MapPin size={16} className={loading ? "text-foreground/40 animate-pulse" : "text-primary group-hover:scale-110 transition-transform"} />
+          <MapPin size={16} className="text-primary group-hover:scale-110 transition-transform" />
           <div className="flex flex-col text-left">
             <span className="text-[9px] text-foreground/50 uppercase tracking-widest leading-none mb-1">
-              {loading ? 'Detecting...' : currentLoc.name}
+              {currentLoc.name}
             </span>
             <span className="text-xs font-bold uppercase tracking-wider text-foreground leading-none flex items-center gap-1">
               <Globe size={10} className="text-foreground/70" />
