@@ -76,10 +76,19 @@
   ],
 
   "quarterfinals_schedule": [
-    { "date": "2026-07-09", "home": "France", "away": "Morocco", "kickoff_local": "3:00 PM ET", "venue": "Gillette Stadium, Boston", "status": "scheduled" },
-    { "date": "2026-07-10", "home": "England", "away": "Spain", "kickoff_local": "6:00 PM PT", "venue": "SoFi Stadium, Los Angeles", "status": "scheduled" },
-    { "date": "2026-07-11", "home": "United States", "away": "Argentina", "kickoff_local": "3:00 PM ET", "venue": "Hard Rock Stadium, Miami", "status": "scheduled" },
-    { "date": "2026-07-11", "home": "Brazil", "away": "Colombia", "kickoff_local": "8:00 PM CT", "venue": "Arrowhead Stadium, Kansas City", "status": "scheduled" }
+    { "date": "2026-07-09", "home": "France", "away": "Morocco", "score": "2-0", "kickoff_local": "3:00 PM ET", "venue": "Gillette Stadium, Boston", "status": "completed", "type": "qf" },
+    { "date": "2026-07-10", "home": "England", "away": "Spain", "score": "1-2", "kickoff_local": "6:00 PM PT", "venue": "SoFi Stadium, Los Angeles", "status": "completed", "type": "qf" },
+    { "date": "2026-07-11", "home": "United States", "away": "Argentina", "score": "1-3", "kickoff_local": "3:00 PM ET", "venue": "Hard Rock Stadium, Miami", "status": "completed", "type": "qf" },
+    { "date": "2026-07-11", "home": "Brazil", "away": "Colombia", "score": "1-0", "kickoff_local": "8:00 PM CT", "venue": "Arrowhead Stadium, Kansas City", "status": "completed", "type": "qf" }
+  ],
+
+  "semifinals_schedule": [
+    { "date": "2026-07-14", "home": "France", "away": "Spain", "score": "1-2", "kickoff_local": "8:00 PM ET", "venue": "AT&T Stadium, Dallas", "status": "completed", "type": "sf" },
+    { "date": "2026-07-15", "home": "Argentina", "away": "Brazil", "score": "2-1", "kickoff_local": "8:00 PM ET", "venue": "Mercedes-Benz Stadium, Atlanta", "status": "completed", "type": "sf" }
+  ],
+
+  "final_schedule": [
+    { "date": "2026-07-19", "home": "Spain", "away": "Argentina", "kickoff_local": "3:00 PM ET", "venue": "MetLife Stadium, New York", "status": "scheduled", "type": "final" }
   ],
 
   "notable_players_mentioned_in_coverage": [

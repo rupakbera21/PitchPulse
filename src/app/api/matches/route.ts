@@ -31,6 +31,8 @@ interface FallbackData {
   round_of_32_results: Record<string, unknown>[];
   round_of_16_schedule: FallbackMatch[];
   quarterfinals_schedule?: FallbackMatch[];
+  semifinals_schedule?: FallbackMatch[];
+  final_schedule?: FallbackMatch[];
 }
 
 interface RawGitHubTeam {
@@ -171,7 +173,9 @@ export async function GET() {
       // Tertiary Fallback: Local static backup
       const allMatches = [
         ...fallback.round_of_16_schedule,
-        ...(fallback.quarterfinals_schedule || [])
+        ...(fallback.quarterfinals_schedule || []),
+        ...(fallback.semifinals_schedule || []),
+        ...(fallback.final_schedule || [])
       ];
       
       // Filter to June 25th 2026 onwards
