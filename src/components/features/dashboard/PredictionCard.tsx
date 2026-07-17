@@ -33,7 +33,7 @@ export function PredictionCard({ match }: PredictionCardProps) {
           <h3 className="text-3xl font-black uppercase tracking-widest text-white">Live Prediction</h3>
         </div>
         
-        <p className="text-4xl md:text-5xl font-black mb-16 relative z-10 text-center uppercase tracking-tight text-foreground/80">Who advances to the Quarter-Finals?</p>
+        <p className="text-4xl md:text-5xl font-black mb-16 relative z-10 text-center uppercase tracking-tight text-foreground/80">Who will win the Final?</p>
         
         <div className="space-y-12 relative z-10 max-w-5xl mx-auto">
           <div>

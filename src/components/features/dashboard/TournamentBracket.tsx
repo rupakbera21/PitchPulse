@@ -62,8 +62,8 @@ const formatLocalTime = (isoString?: string, fallbackTime?: string) => {
 
 export function TournamentBracket({ fixtures, trophyImage }: TournamentBracketProps) {
   const knockoutMatches = useMemo(() => {
-    const qf = fixtures.filter((f) => f.type?.toLowerCase() === 'qf');
-    const matches = qf.length >= 4 ? qf.slice(0, 4) : (fixtures.length >= 4 ? fixtures.slice(-4) : fixtures);
+    const finalStage = fixtures.filter((f) => ['sf', 'third', 'final'].includes(f.type?.toLowerCase() || ''));
+    const matches = finalStage.length >= 4 ? finalStage.slice(-4) : (fixtures.length >= 4 ? fixtures.slice(-4) : fixtures);
     
     const unique = [];
     const seen = new Set();
@@ -84,7 +84,7 @@ export function TournamentBracket({ fixtures, trophyImage }: TournamentBracketPr
     <div className="mt-24 w-full bg-gradient-to-b from-secondary/60 to-background/80 backdrop-blur-xl border border-primary/20 p-8 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden">
       <div className="flex items-center gap-3 mb-16 text-primary justify-center">
         <BarChart3 size={32} />
-        <h3 className="text-3xl md:text-5xl font-black uppercase tracking-widest text-white">Quarter-Finals</h3>
+        <h3 className="text-3xl md:text-5xl font-black uppercase tracking-widest text-white">Finals Stage</h3>
       </div>
       
       <style dangerouslySetInnerHTML={{ __html: `
