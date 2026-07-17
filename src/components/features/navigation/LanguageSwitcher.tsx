@@ -26,7 +26,8 @@ export function LanguageSwitcher() {
   };
 
   const requestLocation = () => {
-    setLoading(true);
+    dismissSplash();
+    
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -45,14 +46,10 @@ export function LanguageSwitcher() {
           }
 
           setLanguage(detectedLang as LanguageCode);
-          setLoading(false);
-          dismissSplash();
         },
         (error) => {
           console.warn("Geolocation denied or failed", error);
           setLanguage('EN');
-          setLoading(false);
-          dismissSplash();
         },
         {
           enableHighAccuracy: false,
@@ -62,8 +59,6 @@ export function LanguageSwitcher() {
       );
     } else {
       setLanguage('EN');
-      setLoading(false);
-      dismissSplash();
     }
   };
 
@@ -123,7 +118,7 @@ export function LanguageSwitcher() {
               </button>
               <button 
                 type="button"
-                onClick={() => { setLoading(false); dismissSplash(); }}
+                onClick={() => dismissSplash()}
                 className="w-full bg-white/5 text-foreground/70 font-bold uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-white/10 hover:text-foreground transition-colors border border-white/10"
               >
                 Skip

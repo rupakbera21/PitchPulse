@@ -70,6 +70,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, state: crowdState });
     }
 
+    if (action === 'deploy_squad' && gateId) {
+      // Here gateId actually represents targetZoneId from the deployment
+      const targetZoneId = gateId;
+      const targetZone = crowdState.zones.find(z => z.id === targetZoneId);
+      
+      if (targetZone && targetZone.occupancy_pct > 60) {
+        const originalOccupancy = targetZone.occupancy_pct;
+        const targetDrop = 30; // drop occupancy by 30%
+        const newOccupancy = Math.max(30, originalOccupancy - targetDrop);
+        const diffOccupancy = originalOccupancy - newOccupancy;
+        
+        targetZone.occupancy_pct = newOccupancy;
+        targetZone.status = newOccupancy > 80 ? 'red' : (newOccupancy > 50 ? 'amber' : 'low');
+
+        // Redistribute to other available zones of the same type under 60%
+        const otherZones = crowdState.zones.filter(z => z.id !== targetZoneId && z.type === targetZone.type && !z.is_closed && z.occupancy_pct < 60);
+        if (otherZones.length > 0) {
+          const splitDiff = diffOccupancy / otherZones.length;
+          otherZones.forEach(oz => {
+            oz.occupancy_pct = Math.min(100, Math.round(oz.occupancy_pct + splitDiff));
+            oz.status = oz.occupancy_pct > 80 ? 'red' : (oz.occupancy_pct > 50 ? 'amber' : 'low');
+          });
+        }
+      }
+      return NextResponse.json({ success: true, state: crowdState });
+    }
+
     // Find the gate and update it manually
     const gateIndex = crowdState.zones.findIndex((z) => z.id === gateId);
     if (gateIndex !== -1) {

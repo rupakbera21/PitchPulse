@@ -152,7 +152,7 @@ export default function ControlRoom() {
     }));
   };
 
-  const confirmDeployment = (unitId: number, targetId: string) => {
+  const confirmDeployment = async (unitId: number, targetId: string) => {
     const sectorName = targetId.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     const mockEta = getRandomMockEta();
     
@@ -164,6 +164,21 @@ export default function ControlRoom() {
     }));
     setDeployingUnitId(null);
     setHoveredZoneId(null);
+
+    // Tell backend to physically enact the crowd redistribution for this deployment
+    try {
+      const res = await fetch('/api/crowd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'deploy_squad', gateId: targetId })
+      });
+      const data = await res.json();
+      if (res.ok && data.state) {
+        mutateCrowd(data.state);
+      }
+    } catch (e) {
+      console.error("Failed to execute crowd redistribution on backend", e);
+    }
   };
 
   const toggleMatchStatus = async () => {
@@ -180,7 +195,7 @@ export default function ControlRoom() {
 
   const activeDeployments = staffUnits.filter(u => u.targetId);
 
-  // Optimistic Map Rendering for Gates & Deployed Squads
+  // Optimistic Map Rendering for Gates
   let optimisticCrowdData = crowdData;
   if (crowdData) {
     optimisticCrowdData = JSON.parse(JSON.stringify(crowdData));
@@ -195,36 +210,7 @@ export default function ControlRoom() {
       });
     }
 
-    // 2. Apply squad deployment crowd redistribution
-    if (activeDeployments.length > 0) {
-      activeDeployments.forEach(dept => {
-        const targetZoneId = dept.targetId;
-        if (!targetZoneId) return;
-
-        const zones = optimisticCrowdData?.zones || [];
-        const targetZone = zones.find((z: ControlRoomZone) => z.id === targetZoneId);
-        
-        if (targetZone && targetZone.occupancy_pct > 60) {
-          const originalOccupancy = targetZone.occupancy_pct;
-          const targetDrop = 30; // drop occupancy by 30%
-          const newOccupancy = Math.max(30, originalOccupancy - targetDrop);
-          const diffOccupancy = originalOccupancy - newOccupancy;
-          
-          targetZone.occupancy_pct = newOccupancy;
-          targetZone.status = newOccupancy > 80 ? 'red' : (newOccupancy > 50 ? 'medium' : 'low');
-
-          // Redistribute to other available zones of the same type under 60%
-          const otherZones = zones.filter((z: ControlRoomZone) => z.id !== targetZoneId && z.type === targetZone.type && !z.is_closed && z.occupancy_pct < 60);
-          if (otherZones.length > 0) {
-            const splitDiff = diffOccupancy / otherZones.length;
-            otherZones.forEach((oz: ControlRoomZone) => {
-              oz.occupancy_pct = Math.min(100, Math.round(oz.occupancy_pct + splitDiff));
-              oz.status = oz.occupancy_pct > 80 ? 'red' : (oz.occupancy_pct > 50 ? 'medium' : 'low');
-            });
-          }
-        }
-      });
-    }
+    // 2. Squad deployment crowd redistribution is now handled persistently by the backend API on confirmDeployment
   }
 
   // Poll for AI Alerts
@@ -522,7 +508,7 @@ export default function ControlRoom() {
               onClick={downloadRandomizedMatchDataset}
               className="text-xs bg-primary/10 border border-primary/30 text-primary hover:bg-primary/25 transition-all px-3 py-1.5 rounded uppercase font-bold tracking-widest flex items-center gap-2"
             >
-              📊 Generate crowd data for {match?.home?.name || 'Home'} vs {match?.away?.name || 'Away'}
+              📊 Generate & Download Simulated Crowd Dataset for {match?.home?.name || 'Home'} vs {match?.away?.name || 'Away'}
             </button>
             <span className="hidden md:block text-foreground/20 font-mono">|</span>
             <div className="flex gap-4">
