@@ -12,6 +12,7 @@ interface Translations {
     stage_round_of_16: string;
     stage_quarter_final: string;
     stage_semi_final: string;
+    stage_final: string;
     kickoff_in: string;
     ask_ai: string;
     living_stadium: string;
@@ -31,6 +32,7 @@ const TRANSLATIONS: Translations = {
     stage_round_of_16: 'Round of 16 Matchday',
     stage_quarter_final: 'Quarter-Final Matchday',
     stage_semi_final: 'Semi-Final Matchday',
+    stage_final: 'World Cup Final',
     kickoff_in: 'Kickoff In',
     ask_ai: 'Ask AI Concierge',
     living_stadium: 'Living Stadium',
@@ -47,6 +49,7 @@ const TRANSLATIONS: Translations = {
     stage_round_of_16: 'Octavos de Final',
     stage_quarter_final: 'Cuartos de Final',
     stage_semi_final: 'Semifinal',
+    stage_final: 'Final de la Copa del Mundo',
     kickoff_in: 'Inicio En',
     ask_ai: 'Conserje de IA',
     living_stadium: 'Estadio Vivo',
@@ -63,6 +66,7 @@ const TRANSLATIONS: Translations = {
     stage_round_of_16: 'دور الـ 16',
     stage_quarter_final: 'ربع النهائي',
     stage_semi_final: 'نصف النهائي',
+    stage_final: 'نهائي كأس العالم',
     kickoff_in: 'بداية المباراة في',
     ask_ai: 'المساعد الذكي',
     living_stadium: 'الملعب الحي',

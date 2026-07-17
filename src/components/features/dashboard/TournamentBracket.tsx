@@ -61,30 +61,22 @@ const formatLocalTime = (isoString?: string, fallbackTime?: string) => {
 };
 
 export function TournamentBracket({ fixtures, trophyImage }: TournamentBracketProps) {
-  const knockoutMatches = useMemo(() => {
-    const finalStage = fixtures.filter((f) => ['sf', 'third', 'final'].includes(f.type?.toLowerCase() || ''));
-    const matches = finalStage.length >= 4 ? finalStage.slice(-4) : (fixtures.length >= 4 ? fixtures.slice(-4) : fixtures);
-    
-    const unique = [];
-    const seen = new Set();
-    for (const m of matches) {
-      const key = m.match_id || `${m.home}-${m.away}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        unique.push(m);
-      }
-    }
-    while (unique.length < 4) {
-      unique.push({ home: 'TBD', away: 'TBD', score: '0-0', status: 'scheduled' });
-    }
-    return unique.slice(0, 4);
+  const finalMatch = useMemo(() => {
+    return fixtures.find((f) => f.type?.toLowerCase() === 'final') || { home: 'TBD', away: 'TBD', score: '0-0', status: 'scheduled' };
   }, [fixtures]);
 
   return (
     <div className="mt-24 w-full bg-gradient-to-b from-secondary/60 to-background/80 backdrop-blur-xl border border-primary/20 p-8 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden">
-      <div className="flex items-center gap-3 mb-16 text-primary justify-center">
-        <BarChart3 size={32} />
-        <h3 className="text-3xl md:text-5xl font-black uppercase tracking-widest text-white">Finals Stage</h3>
+      <div className="flex flex-col items-center gap-4 mb-16 text-primary justify-center">
+        <div className="flex items-center gap-3">
+          <BarChart3 size={32} />
+          <h3 className="text-3xl md:text-5xl font-black uppercase tracking-widest text-white">Finals Stage</h3>
+        </div>
+        <div className="text-center mt-2 bg-background/50 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
+          <span className={`text-sm uppercase tracking-widest font-bold ${finalMatch.status === 'live' ? 'text-danger animate-pulse' : 'text-foreground/80'}`}>
+            {finalMatch.status} • {formatLocalTime(finalMatch.isoDate, finalMatch.kickoff_local || finalMatch.time || finalMatch.date)}
+          </span>
+        </div>
       </div>
       
       <style dangerouslySetInnerHTML={{ __html: `
@@ -99,89 +91,45 @@ export function TournamentBracket({ fixtures, trophyImage }: TournamentBracketPr
       `}} />
       
       <div className="relative flex flex-col lg:flex-row justify-center items-center lg:items-stretch min-h-[500px] gap-8 lg:gap-0">
-        {/* Left Bracket */}
-        <div className="flex flex-col justify-around w-full lg:flex-1 relative z-10 gap-16 py-8">
-          {knockoutMatches.slice(0, 2).map((fixture, idx) => (
-            <div key={idx} className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-2xl p-6 shadow-xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
-              <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-3">
-                <div className="flex items-center gap-3">
-                  {getCountryCode(fixture.home) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width={28} height={20} alt={`${fixture.home} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                  <span 
-                    className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                    style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(fixture.home)} 0%, ${getTeamColor(fixture.home)} 35%, #ffffff 50%, ${getTeamColor(fixture.home)} 65%, ${getTeamColor(fixture.home)} 100%)` }}
-                  >
-                    {fixture.home}
-                  </span>
-                </div>
-                <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[0] || 0}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  {getCountryCode(fixture.away) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width={28} height={20} alt={`${fixture.away} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                  <span 
-                    className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                    style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(fixture.away)} 0%, ${getTeamColor(fixture.away)} 35%, #ffffff 50%, ${getTeamColor(fixture.away)} 65%, ${getTeamColor(fixture.away)} 100%)` }}
-                  >
-                    {fixture.away}
-                  </span>
-                </div>
-                <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[1] || 0}</span>
-              </div>
-              <div className="mt-4 text-center">
-                <span className={`text-xs uppercase tracking-widest font-bold ${fixture.status === 'live' ? 'text-danger animate-pulse' : 'text-foreground/50'}`}>
-                  {fixture.status} • {formatLocalTime(fixture.isoDate, fixture.kickoff_local || fixture.time || fixture.date)}
-                </span>
-              </div>
+        {/* Left Team (Home) */}
+        <div className="flex flex-col justify-center w-full lg:flex-1 relative z-10 py-8">
+          <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-3xl p-10 shadow-2xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
+            <div className="flex flex-col items-center gap-8">
+              {getCountryCode(finalMatch.home) && <NextImage src={`https://flagcdn.com/w160/${getCountryCode(finalMatch.home)}.png`} width={160} height={100} alt={`${finalMatch.home} flag`} className="rounded-lg shadow-[0_0_30px_rgba(255,255,255,0.2)]" unoptimized />}
+              <span 
+                className="font-black text-4xl md:text-5xl uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient text-center"
+                style={{ backgroundImage: `linear-gradient(to right, ${getTeamColor(finalMatch.home)} 0%, ${getTeamColor(finalMatch.home)} 35%, #ffffff 50%, ${getTeamColor(finalMatch.home)} 65%, ${getTeamColor(finalMatch.home)} 100%)` }}
+              >
+                {finalMatch.home}
+              </span>
+              <span className="font-black text-7xl text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">{finalMatch.score?.split('-')[0] || 0}</span>
             </div>
-          ))}
-          {/* Connecting Border for Left (Hidden on Mobile) */}
-          <div className="hidden lg:block absolute top-[20%] bottom-[20%] right-[-40px] w-10 border-r-[3px] border-y-[3px] border-white/20 rounded-r-2xl pointer-events-none" />
-          <div className="hidden lg:block absolute top-1/2 right-[-80px] w-10 h-0 border-t-[3px] border-white/20 pointer-events-none" />
+          </div>
+          {/* Connecting Border */}
+          <div className="hidden lg:block absolute top-1/2 right-[-80px] w-20 h-0 border-t-[4px] border-white/30 pointer-events-none" />
         </div>
 
         {/* Center Trophy */}
-        <div className="w-full lg:w-[400px] shrink-0 h-[400px] lg:h-auto flex items-center justify-center relative z-20 order-first lg:order-none">
+        <div className="w-full lg:w-[400px] shrink-0 h-[400px] lg:h-auto flex flex-col items-center justify-center relative z-20 order-first lg:order-none">
           {trophyImage}
         </div>
 
-        {/* Right Bracket */}
-        <div className="flex flex-col justify-around w-full lg:flex-1 relative z-10 gap-16 py-8">
-          {knockoutMatches.slice(2, 4).map((fixture, idx) => (
-            <div key={idx} className="bg-gradient-to-bl from-white/10 to-white/5 border border-white/20 rounded-2xl p-6 shadow-xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
-              <div className="flex justify-between items-center border-b border-white/10 pb-3 mb-3">
-                <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[0] || 0}</span>
-                <div className="flex items-center gap-3">
-                  <span 
-                    className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                    style={{ backgroundImage: `linear-gradient(to left, ${getTeamColor(fixture.home)} 0%, ${getTeamColor(fixture.home)} 35%, #ffffff 50%, ${getTeamColor(fixture.home)} 65%, ${getTeamColor(fixture.home)} 100%)` }}
-                  >
-                    {fixture.home}
-                  </span>
-                  {getCountryCode(fixture.home) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.home)}.png`} width={28} height={20} alt={`${fixture.home} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-black text-2xl text-primary">{fixture.score?.split('-')[1] || 0}</span>
-                <div className="flex items-center gap-3">
-                  <span 
-                    className="font-black uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient"
-                    style={{ backgroundImage: `linear-gradient(to left, ${getTeamColor(fixture.away)} 0%, ${getTeamColor(fixture.away)} 35%, #ffffff 50%, ${getTeamColor(fixture.away)} 65%, ${getTeamColor(fixture.away)} 100%)` }}
-                  >
-                    {fixture.away}
-                  </span>
-                  {getCountryCode(fixture.away) && <NextImage src={`https://flagcdn.com/w40/${getCountryCode(fixture.away)}.png`} width={28} height={20} alt={`${fixture.away} flag`} className="rounded-sm shadow-sm" unoptimized />}
-                </div>
-              </div>
-              <div className="mt-4 text-center">
-                <span className={`text-xs uppercase tracking-widest font-bold ${fixture.status === 'live' ? 'text-danger animate-pulse' : 'text-foreground/50'}`}>
-                  {fixture.status} • {formatLocalTime(fixture.isoDate, fixture.kickoff_local || fixture.time || fixture.date)}
-                </span>
-              </div>
+        {/* Right Team (Away) */}
+        <div className="flex flex-col justify-center w-full lg:flex-1 relative z-10 py-8">
+          <div className="bg-gradient-to-bl from-white/10 to-white/5 border border-white/20 rounded-3xl p-10 shadow-2xl relative z-20 backdrop-blur-md hover:scale-[1.02] transition-transform">
+            <div className="flex flex-col items-center gap-8">
+              {getCountryCode(finalMatch.away) && <NextImage src={`https://flagcdn.com/w160/${getCountryCode(finalMatch.away)}.png`} width={160} height={100} alt={`${finalMatch.away} flag`} className="rounded-lg shadow-[0_0_30px_rgba(255,255,255,0.2)]" unoptimized />}
+              <span 
+                className="font-black text-4xl md:text-5xl uppercase tracking-wider bg-clip-text text-transparent drop-shadow-md premium-text-gradient text-center"
+                style={{ backgroundImage: `linear-gradient(to left, ${getTeamColor(finalMatch.away)} 0%, ${getTeamColor(finalMatch.away)} 35%, #ffffff 50%, ${getTeamColor(finalMatch.away)} 65%, ${getTeamColor(finalMatch.away)} 100%)` }}
+              >
+                {finalMatch.away}
+              </span>
+              <span className="font-black text-7xl text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">{finalMatch.score?.split('-')[1] || 0}</span>
             </div>
-          ))}
-          {/* Connecting Border for Right (Hidden on Mobile) */}
-          <div className="hidden lg:block absolute top-[20%] bottom-[20%] left-[-40px] w-10 border-l-[3px] border-y-[3px] border-white/20 rounded-l-2xl pointer-events-none" />
-          <div className="hidden lg:block absolute top-1/2 left-[-80px] w-10 h-0 border-t-[3px] border-white/20 pointer-events-none" />
+          </div>
+          {/* Connecting Border */}
+          <div className="hidden lg:block absolute top-1/2 left-[-80px] w-20 h-0 border-t-[4px] border-white/30 pointer-events-none" />
         </div>
       </div>
     </div>
