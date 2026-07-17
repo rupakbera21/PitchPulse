@@ -56,6 +56,25 @@ interface RawGitHubMatch {
   type?: string;
 }
 
+const STADIUMS: Record<string, string> = {
+  "1": "Estadio Azteca, Mexico City",
+  "2": "Estadio Akron, Guadalajara",
+  "3": "Estadio BBVA, Monterrey",
+  "4": "AT&T Stadium, Dallas",
+  "5": "NRG Stadium, Houston",
+  "6": "Arrowhead Stadium, Kansas City",
+  "7": "Mercedes-Benz Stadium, Atlanta",
+  "8": "Hard Rock Stadium, Miami",
+  "9": "Gillette Stadium, Boston",
+  "10": "Lincoln Financial Field, Philadelphia",
+  "11": "MetLife Stadium, New York",
+  "12": "BMO Field, Toronto",
+  "13": "BC Place, Vancouver",
+  "14": "Lumen Field, Seattle",
+  "15": "Levi's Stadium, San Francisco",
+  "16": "SoFi Stadium, Los Angeles"
+};
+
 let fallbackData: FallbackData | null = null;
 
 function loadFallbackData(): FallbackData {
@@ -98,7 +117,7 @@ export async function GET() {
           date: m.local_date ? m.local_date.split(' ')[0] : '',
           time: m.local_date ? m.local_date.split(' ')[1] : '',
           isoDate,
-          stadium: `Stadium ${m.stadium_id}`,
+          stadium: m.stadium_id ? (STADIUMS[String(m.stadium_id)] || `Stadium ${m.stadium_id}`) : 'TBD',
           home: m.home_team_name_en || m.home_team_label || 'TBD',
           away: m.away_team_name_en || m.away_team_label || 'TBD',
           score: `${m.home_score !== 'null' ? m.home_score : 0}-${m.away_score !== 'null' ? m.away_score : 0}`,
@@ -153,7 +172,7 @@ export async function GET() {
             date: m.local_date ? m.local_date.split(' ')[0] : '',
             time: m.local_date ? m.local_date.split(' ')[1] : '',
             isoDate,
-            stadium: `Stadium ${m.stadium_id}`,
+            stadium: m.stadium_id ? (STADIUMS[String(m.stadium_id)] || `Stadium ${m.stadium_id}`) : 'TBD',
             home: (m.home_team_id && m.home_team_id !== '0' && m.home_team_id !== 0) ? (teamsMap[String(m.home_team_id)] || `Team ${m.home_team_id}`) : (m.home_team_label || 'TBD'),
             away: (m.away_team_id && m.away_team_id !== '0' && m.away_team_id !== 0) ? (teamsMap[String(m.away_team_id)] || `Team ${m.away_team_id}`) : (m.away_team_label || 'TBD'),
             score: `${m.home_score !== 'null' ? m.home_score : 0}-${m.away_score !== 'null' ? m.away_score : 0}`,
